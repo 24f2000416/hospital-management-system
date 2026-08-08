@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Availability</title>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+}
+
+table {
+    width: 70%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* Slot box (base style) */
+.slot-box {
+    padding: 8px;
+    display: inline-block;
+    border: 1px solid #999;
+    border-radius: 6px;
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+/* Booked slot */
+.slot-box.booked {
+    background: #f8d7da;
+    border-color: #b30000;
+    color: #b30000;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Available slot */
+.slot-box.available {
+    background: #e2ffe2;
+    border-color: green;
+    color: green;
+}
+
+/* Highlight selected slot */
+input[type="radio"]:checked + .slot-box,
+label input[type="radio"]:checked + .slot-box {
+    background: #cce0ff;
+    border-color: #0055ff;
+    color: #003399;
+}
+
+/* Hide radio input */
+input[type="radio"] {
+    display: none;
+}
+
+/* Save button */
+.save-btn {
+    padding: 8px 15px;
+    border: 1px solid #000;
+    background: #fff;
+    cursor: pointer;
+    float: right;
+    margin-right: 15%;
+}
+
+    </style>
+
+</head>
+
+<body>
+
+<h2 style="text-align:center;">Doctor Availability</h2>
+
+<form action="{{ url_for('routes.view_doctors_by_patient', dept_id=doctor.department_id) }}" method="get"
+      style="position:absolute; top:20px; right:20px;">
+    <button style="padding:5px 12px; background:#c0392b; color:white; border:none; border-radius:4px; cursor:pointer;">
+        Back
+    </button>
+</form>
+
+<form method="POST" action="{{ url_for('routes.booking_appointment', doctor_id=doctor.id) }}">
+
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Morning</th>
+            <th>Evening</th>
+        </tr>
+
+        {% for d in availabilities %}
+        <tr>
+            <td>{{ d.date.strftime("%Y-%m-%d") }}</td>
+
+            <!-- morning -->
+            <td>
+                <label style="cursor:pointer;">
+                    <input type="radio"
+                           name="slot"
+                           value="{{ d.date.strftime('%Y-%m-%d') }}|morning"
+                           {% if not d.morning %}disabled{% endif %}>
+                    <!-- add available/booked class here -->
+                    <div class="slot-box {% if d.morning %}available{% else %}booked{% endif %}">
+                        8 AM – 12 PM
+                    </div>
+                </label>
+            </td>
+
+            <!-- evening -->
+            <td>
+                <label style="cursor:pointer;">
+                    <input type="radio"
+                           name="slot"
+                           value="{{ d.date.strftime('%Y-%m-%d') }}|evening"
+                           {% if not d.evening %}disabled{% endif %}>
+                    <div class="slot-box {% if d.evening %}available{% else %}booked{% endif %}">
+                        4 PM – 9 PM
+                    </div>
+                </label>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button class="save-btn" type="submit">Book Appointment</button>
+
+</form>
+
+</body>
+</html>

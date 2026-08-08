@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CarePlus Multispeciality Hospital</title>
+  <style>
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    background:
+        linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1)),
+        url('https://th.bing.com/th/id/OIP.16B-iLuLe6W2OqLprBKFzQHaFY?w=218&h=180&c=7&r=0&o=7&cb=ucfimgc2&dpr=1.3&pid=1.7&rm=3')
+        no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+}
+
+/* dark overlay */
+.overlay {
+    background: rgba(0,0,0,0.5);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* navigation bar */
+nav {
+    background: rgba(0,60,120,0.9);
+    padding: 12px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav .logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+nav ul li a:hover {
+    color: #cfe3ff;
+}
+
+/* hero section */
+.hero {
+    text-align: center;
+    margin: 15% auto 0;
+    max-width: 700px;
+    padding: 0 15px;
+}
+
+.hero h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 17px;
+    color: #e0e0e0;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* buttons */
+.btn-group a {
+    display: inline-block;
+    padding: 10px 22px;
+    margin: 5px;
+    border-radius: 4px;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-group a:hover {
+    background: #005fb3;
+}
+
+/* facilities section */
+.facilities {
+    background: rgba(255,255,255,0.1);
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 25px 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.facilities h2 {
+    margin-bottom: 15px;
+}
+
+.facilities ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #ddd;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* footer */
+footer {
+    text-align: center;
+    font-size: 13px;
+    color: #ccc;
+    margin-top: 60px;
+    padding-bottom: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="overlay">
+
+    <!-- Navbar -->
+    <nav>
+      <div class="logo">CarePlus Multispeciality Hospital</div>
+      <ul>
+        <li><a href="{{ url_for('routes.index') }}">Home</a></li>
+        <li><a href="{{ url_for('routes.login') }}">Login</a></li>
+        <li><a href="{{ url_for('routes.register') }}">Sign Up</a></li>
+      </ul>
+    </nav>
+
+    <!-- ✅ Content block for all pages -->
+    {% block content %}
+    <!-- Default home page content -->
+    <div class="hero">
+      <h1>Welcome to CarePlus Hospital</h1>
+      <p>
+        CarePlus Multispeciality Hospital provides trusted and compassionate healthcare services
+        with modern medical technology and expert professionals.
+      </p>
+      <div class="btn-group">
+        <a href="{{ url_for('routes.login') }}">Login</a>
+        <a href="{{ url_for('routes.register') }}">Sign Up</a>
+      </div>
+    </div>
+
+    <div class="facilities">
+      <h2>Our Core Facilities</h2>
+      <ul>
+        <li>24/7 Emergency and Trauma Care</li>
+        <li>Advanced Diagnostic and Imaging Center</li>
+        <li>Specialized Departments with Expert Doctors</li>
+        <li>Online Appointment Booking System</li>
+        <li>Fully Equipped ICU and Operation Theatres</li>
+        <li>Pharmacy and Laboratory Services</li>
+        <li>Digital Patient Records and Reports</li>
+      </ul>
+    </div>
+    {% endblock %}
+
+    <footer>
+      &copy; 2025 CarePlus Multispeciality Hospital. All rights reserved.
+    </footer>
+
+  </div>
+</body>
+</html>

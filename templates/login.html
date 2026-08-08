@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+  <div class="container" 
+       style="background:white; color:black; padding:30px; border-radius:10px; 
+              max-width:400px; margin:80px auto; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+
+    {% if mess %}
+      <div style="background-color:#f8d7da; color:#721c24; padding:10px; 
+                  border-radius:5px; margin-bottom:15px; max-width:400px; 
+                  margin:auto; text-align:center;">
+        {{ mess }}
+      </div>
+    {% endif %}
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="margin:0;">Login</h2>
+      <a href="{{ url_for('routes.index') }}" 
+         style="color:#007bff; text-decoration:none;">&larr; Back</a>
+    </div>
+
+    <form action="{{ url_for('routes.login') }}" method="POST">
+      <label>Email</label>
+      <input type="email" name="email" required 
+             style="width:100%; padding:10px; margin:8px 0; 
+                    border:1px solid #ccc; border-radius:6px;">
+
+      <label>Password</label>
+      <input type="password" name="password" required 
+             style="width:100%; padding:10px; margin:8px 0; 
+                    border:1px solid #ccc; border-radius:6px;">
+
+      <button type="submit" 
+              style="width:100%; padding:12px; background:#007bff; 
+                     color:white; border:none; border-radius:6px;">
+        Login
+      </button>
+    </form>
+
+    <div style="text-align:center; margin-top:15px;">
+      Don't have an account?
+      <a href="{{ url_for('routes.register') }}" style="color:#007bff;">Register</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Availability</title>
+
+    <style>
+/* Page font */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Main table layout */
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px;
+    text-align: center;
+}
+
+/* Date display box */
+.date-box {
+    background: #e6f2ff;
+    padding: 10px 18px;
+    border: 1px solid #9eb3c7;
+    border-radius: 6px;
+    display: inline-block;
+    min-width: 140px;
+}
+
+/* Default look for each time option */
+.time-slot {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    min-width: 160px;
+    cursor: pointer;
+    user-select: none;
+
+    background: #ffecec;
+    color: red;
+    border: 2px solid red;
+}
+
+/* When the hidden checkbox is active */
+input[type="checkbox"]:checked + .time-slot {
+    background: #e9ffe9;
+    color: green;
+    border-color: green;
+}
+
+/* Hide the checkbox — only show the styled label */
+input[type="checkbox"] {
+    display: none;
+}
+
+/* Save button styling */
+.save-btn {
+    background: #ffffff;
+    color: green;
+    border: 2px solid green;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Align save button container */
+.save-container {
+    width: 80%;
+    margin: 20px auto 0 auto;
+    text-align: right;
+}
+
+    </style>
+
+</head>
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div style="width:80%; margin:auto;">
+      {% for category, message in messages %}
+        <div style="padding:10px; background:#f8d7da; border-left:5px solid red;
+                    margin-bottom:10px; border-radius:5px;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+<form action="{{ url_for('routes.doctor_dashboard') }}" method="get"
+      style="position:absolute; top:20px; right:20px;">
+    <button style="padding:5px 12px; background:#c0392b; color:white; border:none;
+                   border-radius:4px; cursor:pointer;">
+        Back
+    </button>
+</form>
+
+<h2 style="text-align:center; margin-top:40px;">Doctor's Availability</h2>
+
+<form method="POST" action="{{ url_for('routes.doctor_availability') }}">
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Morning Slot</th>
+            <th>Evening Slot</th>
+        </tr>
+
+        {% for day in days_availability %}
+        <tr>
+
+            <!-- Date -->
+            <td>
+                <div class="date-box">
+                    {{ day.date.strftime("%d/%m/%Y") }}
+                </div>
+            </td>
+
+            <!-- Morning Slot -->
+            <td>
+                <label>
+    <input type="checkbox"
+           name="morning_{{ day.date.isoformat() }}"
+           {% if day.morning %}checked{% endif %}
+           {% if day.morning_booked %}disabled data-booked="true"{% endif %} />
+
+    <div class="time-slot"
+         {% if day.morning_booked %}
+             title="This slot is already booked. You cannot change it."
+             style="opacity:0.5; cursor:not-allowed;"
+         {% endif %}>
+        08:00 - 12:00 am
+    </div>
+</label>
+
+            </td>
+
+            <!-- Evening Slot -->
+            <td>
+                <label>
+    <input type="checkbox"
+           name="evening_{{ day.date.isoformat() }}"
+           {% if day.evening %}checked{% endif %}
+           {% if day.evening_booked %}disabled data-booked="true"{% endif %} />
+
+    <div class="time-slot"
+         {% if day.evening_booked %}
+             title="This slot is already booked. You cannot change it."
+             style="opacity:0.5; cursor:not-allowed;"
+         {% endif %}>
+        04:00 - 09:00 pm
+    </div>
+</label>
+
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="save-container">
+        <button class="save-btn">Save</button>
+    </div>
+</form>
+
+</body>
+
+
+<script>
+document.querySelectorAll("input[data-booked='true']").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+        e.preventDefault();
+        alert("This slot is already booked. You cannot change it.");
+    });
+});
+</script>
+
+</html>

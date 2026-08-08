@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+
+  <h1 style="text-align: center; font-family: Arial, sans-serif;">Admin Dashboard</h1>
+ <a href="{{ url_for('routes.logout') }}" 
+    style="position:absolute; top:20px; right:20px; padding:6px 12px; background:#dc3545; color:white; text-decoration:none; border-radius:4px;">
+    Logout</a>
+
+  <div style="display:flex; justify-content:right; align-items:center; margin-top:30px;">
+    <form action="#" method="get" style="display:flex; align-items:center; gap:10px;">
+      <label for="search"><h2>Search:</h2></label>
+      <input type="text" id="search" name="query" 
+       value="{{ query or '' }}" 
+       placeholder="doctor, patient, appointment" style="padding:6px;">
+
+      <button type="submit" style="padding:6px 12px;">Search</button>
+    </form>
+  </div>
+
+
+
+
+<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    <h3 style="margin:0;">Departments</h3>
+    <a href="{{ url_for('routes.add_department') }}" 
+       style="padding:6px 10px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">
+       + Add Department
+    </a>
+  </div>
+
+  {% if departments %}
+  <table style="width:80%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Department Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">Description</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dept in departments %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.name }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.description or "No description" }}</td>
+        <td>
+          <form action="{{ url_for('routes.view_doctors_by_admin', dept_id=dept.id) }}" method="get" style="display:inline;">
+            <button class="button button-primary">View Doctors</button>
+          </form>
+          <form action="{{ url_for('routes.delete_department', dept_id=dept.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('Delete this department?')">Delete</button>
+          </form>
+          <form action="{{ url_for('routes.blacklist_department', dept_id=dept.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('blacklist this department?')">blacklist</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No departments found.</p>
+  {% endif %}
+
+</div>
+
+
+
+
+
+<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    <h3 style="margin:0;">Doctors</h3>
+    <a href="{{ url_for('routes.add_doctor') }}" 
+       style="padding:6px 10px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">
+       + Add Doctor
+    </a>
+  </div>
+
+  {% if doctors %}
+  <table style="width:80%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor Email</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor contact</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor Department ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor Department Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doctor in doctors %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.username }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.email }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.phone }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.department_id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.department.name if doctor.department else "No department" }}</td>
+        <td>
+          <form action="{{ url_for('routes.edit_doctor', doctor_id=doctor.id) }}" method="get" style="display:inline;">
+            <button class="button button-primary">Edit</button>
+          </form>
+          <form action="{{ url_for('routes.delete_doctor', doctor_id=doctor.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('Delete this doctor?')">Delete</button>
+          </form>
+          <form action="{{ url_for('routes.blacklist_doctor', doctor_id=doctor.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('blacklist this doctor?')">blacklist</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No doctors found.</p>
+  {% endif %}
+  
+</div>
+
+
+
+<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+
+
+  {% if  patients %}
+  <h3 style="margin:0;">patients</h3>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">patient Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">patient Email</th>
+        <th style="border:1px solid #ccc; padding:6px;">patient contact</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for patient in patients %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ patient.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ patient.username }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ patient.email }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ patient.phone }}</td>
+         <td>
+          <form action="{{ url_for('routes.edit_3264_patient', patient_id=patient.id) }}" method="get" style="display:inline;">
+            <button class="button button-primary">Edit</button>
+          </form>
+          <form action="{{ url_for('routes.delete_3264_patient', patient_id=patient.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('Delete this patient?')">Delete</button>
+          </form>
+          <form action="{{ url_for('routes.blacklist_3264_patient', patient_id=patient.id) }}" method="post" style="display:inline;">
+            <button class="button button-danger" onclick="return confirm('blacklist this patient?')">blacklist</button>
+          </form>
+        </td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No patients found.</p>
+  {% endif %}
+
+</div>
+
+
+
+
+
+<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+
+
+  {% if  appointments %}
+  <h3 style="margin:0;">Appointments</h3>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Patient ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Date</th>
+        <th style="border:1px solid #ccc; padding:6px;">Time</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appointment in appointments %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.patient_id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.doctor_id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.appointment_date }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.appointment_time }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">
+          <a href="{{ url_for('routes.patient_history_by_admin', patient_id=appointment.patient_id) }}">
+            <button type="button">View</button></a></td>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No patients found.</p>
+  {% endif %}
+
+</div>
+
+
+
+</body>
+</html>

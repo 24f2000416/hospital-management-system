@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Details</title>
+
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+    margin: 0;
+}
+
+.card {
+    width: 380px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+.role {
+    text-align: center;
+    color: #555;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+.divider {
+    height: 1px;
+    background: #ddd;
+    margin: 15px 0;
+}
+
+.info label {
+    font-weight: bold;
+    color: #444;
+}
+
+.info p {
+    margin: 6px 0 12px;
+    color: #222;
+}
+
+.btn-box {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #005fcc;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Dr. {{ doctor.username }}</h2>
+        <p class="role">{{ doctor.role }}</p>
+
+        <div class="divider"></div>
+
+        <div class="info">
+            <label>Email:</label>
+            <p>{{ doctor.email }}</p>
+
+            <label>Phone:</label>
+            <p>{{ doctor.phone if doctor.phone else "Not Provided" }}</p>
+
+            <label>Department:</label>
+            <p>{{ doctor.department.name }}</p>
+
+            <label>Qualification:</label>
+            <p>{{ doctor.drqualification if doctor.drqualification else "Not Provided" }}</p>
+
+            <label>Experience:</label>
+            <p>{{ doctor.drexperience }} years</p>
+        </div>
+
+        <div class="btn-box">
+            <a class="btn" href="{{ url_for('routes.view_doctors_by_patient',dept_id=doctor.department.id) }}">Back</a>
+        
+        
+            <a class="btn" href="{{ url_for('routes.check_avail_by_patient',doctor_id=doctor.id) }}">Check Availability</a>
+        </div>
+    </div>
+
+</body>
+</html>

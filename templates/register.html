@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+  <div class="container" style="background:white; color:black; padding:30px; border-radius:10px; max-width:420px; margin:80px auto; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+    <a href="{{ url_for('routes.index') }}" style="color:#007bff; text-decoration:none;">&larr; Back</a>
+    <h2 style="text-align:center;">Create an Account</h2>
+
+    <form action="{{ url_for('routes.register') }}" method="POST">
+      <label>Username</label>
+      <input type="text" name="username" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+
+      <label>Email</label>
+      <input type="email" name="email" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+
+      <label>Password</label>
+      <input type="password" name="password" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+
+      <label>Phone</label>
+      <input type="text" name="phone" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;">
+
+      <button type="submit" style="width:100%; padding:12px; background:#007bff; color:white; border:none; border-radius:6px;">Register</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

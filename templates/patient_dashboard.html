@@ -1,0 +1,129 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Patient Dashboard</title>
+
+</head>
+<body justify-content="center" align="center">
+  <h1 style="text-align: center; font-family: Arial, sans-serif;">Patient Dashboard</h1>
+
+<div style="position:absolute; top:20px; right:20px; display:flex; gap:10px;">
+
+    <form action="{{ url_for('routes.edit_profile_by_patient') }}" method="get">
+        <button type="submit"
+        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
+        Edit Profile</button>
+    </form>
+
+    <form action="{{ url_for('routes.history_patient') }}" method="get">
+        <button type="submit"
+        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
+        History</button>
+    </form>
+
+    <form action="{{ url_for('routes.logout') }}" method="get">
+        <button type="submit"
+        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
+        Logout</button>
+    </form>
+
+</div>
+
+
+  <div style="display:flex; justify-content:right; align-items:center; margin-top:30px;">
+    <form action="#" method="get" style="display:flex; align-items:center; gap:10px;">
+      <label for="search"><h2>Search:</h2></label>
+      <input type="text" id="search" name="query" 
+       value="{{ query or '' }}" 
+       placeholder="doctor, patient, appointment" style="padding:6px;">
+
+      <button type="submit" style="padding:6px 12px;">Search</button>
+    </form>
+  </div>
+
+
+
+<h2>Welcome, {{ session.username }}!</h2>
+
+<div style="width:80%; margin:0 auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; justify-content:center; align-items:center;">
+
+  {% if departments %}
+  <h1 style="text-align: center; font-family: Arial, sans-serif;">Available Departments</h1>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">ID</th>
+        <th style="border:1px solid #ccc; padding:6px;">Department Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">Description</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dept in departments %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.name }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ dept.description or "No description" }}</td>
+        <td style="text-align: center; border:1px solid #ccc; padding:6px;">
+          <form action="{{ url_for('routes.view_doctors_by_patient', dept_id=dept.id) }}" method="get" style="display:inline;">
+            <button class="button button-primary" >View Doctors</button>
+          </form>
+          
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No departments found.</p
+  {% endif %}
+
+
+
+</div>
+ 
+<div style="width:80%; margin:100px auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; justify-content:center; align-items:center;">
+
+  {% if appointments %}
+  <h1 style="text-align: center; font-family: Arial, sans-serif;">Upcoming Appointments</h1>
+  <table style="width:80%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:6px;">Sr. No.</th>
+        <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
+        <th style="border:1px solid #ccc; padding:6px;">Department</th>
+        <th style="border:1px solid #ccc; padding:6px;">Date</th>
+        <th style="border:1px solid #ccc; padding:6px;">Time</th>
+        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for apt in appointments %}
+      <tr>
+        <td style="border:1px solid #ccc; padding:6px;">{{ apt.id }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ apt.doctor.username }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ apt.doctor.department.name }}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ apt.appointment_date}}</td>
+        <td style="border:1px solid #ccc; padding:6px;">{{ apt.appointment_time}}</td>
+        <td style="text-align: center; border:1px solid #ccc; padding:6px;">
+          <form action = "{{url_for('routes.cancel_apt_by_pt', appointment_id=apt.id)}}" method="POST" style="display:inline;">
+            <button class="button button-primary" >Cancel</button>
+          </form>
+          
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;">No Appointments found.</p>
+  {% endif %}
+
+
+
+</div>
+
+
+</body>
+</html>

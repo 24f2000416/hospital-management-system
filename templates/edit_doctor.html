@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Doctor</title>
+  <style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+}
+
+.container {
+    width: 400px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+h3 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 7px;
+    box-sizing: border-box;
+}
+
+.btn {
+    background: #007bff;
+    color: #fff;
+    padding: 7px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+a {
+    margin-left: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    {% if error_message %}
+      <div class="error">{{ error_message }}</div>
+    {% endif %}
+
+    <h3>Edit Doctor</h3>
+    <form method="POST" action="{{ url_for('routes.edit_doctor',doctor_id=doctor.id) }}">
+
+      <div class="form-group">
+        
+
+      <div class="form-group">
+        <label for="department">Department *</label>
+        <select id="department" name="department_id"  required>
+          <option value="{{doctor.department.name}}"  selected>{{doctor.department.name}}</option>
+          {% for dept in departments %}
+            <option value="{{ dept.id }}">{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Doctor Name:</label>
+        <input type="text" id="username" name="username" value="{{doctor.username}}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required value="{{doctor.email}}">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" value="{{doctor.password}}" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="exp">years of experience</label>
+        <input type="number" id="exp" name="exp" value="{{doctor.drexperience}}" required>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="quali">Qualification:</label>
+        <input type="text" id="quali" name="Qualification" value="{{doctor.drqualification}}">
+      </div>
+
+      
+      <div class="form-group">
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" value="{{doctor.phone}}" required>
+      </div>
+
+
+      
+
+      <button type="submit" class="btn">Save</button>
+      <a href="{{ url_for('routes.admin_dashboard') }}">Cancel</a>
+    </form>
+  </div>
+
+</body>
+</html>

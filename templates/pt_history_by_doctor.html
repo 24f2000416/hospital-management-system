@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>Patient History</title>
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background: #eee;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+    </style>
+</head>
+<body>
+  <h2>Patient History</h2>
+  <form action="{{ url_for('routes.doctor_dashboard') }}" method="get"
+        style="position:absolute; top:20px; right:20px;">
+      <button style="padding:5px 12px; background:#c0392b; color:white; border:none;
+                     border-radius:4px; cursor:pointer;">
+          Back
+      </button>
+    </form>
+  
+  <table>
+    <thead>
+      <tr>
+        
+        <th>Visit Date</th>
+        <th>Visit Number</th>
+        <th>Visit Type</th>
+        <th>Prescription</th>
+        <th>Diagnosis</th>
+        <th>Medicines</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% if treatments%}
+      {% for entry in treatments %}
+      <tr>
+        
+        <td>{{ entry.visit_date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ entry.visit_number }}</td>
+        <td>{{ entry.visit_type }}</td>
+        <td>{{ entry.prescription or "N/A" }}</td>
+        <td>{{ entry.diagnosis_text or "N/A" }}</td>
+        <td>{{ entry.medicines or "N/A" }}</td>
+
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
