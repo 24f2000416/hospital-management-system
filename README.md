@@ -3,4 +3,4 @@ Hospital Management System (HMS) web application that allows Admins, Doctors, an
 
 How to run the project
 To run the project you have to app.py file as i defined my routes in different and models also in different file 
-so run app.py file to run the project
+so run app.py file to run the project  
