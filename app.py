@@ -9,6 +9,12 @@ load_dotenv()
 app = Flask(__name__)
 
 
+app.secret_key = os.environ.get("SECRET_KEY")
+
+if not app.secret_key:
+    raise RuntimeError("SECRET_KEY environment variable is not set")
+
+
 database_url = os.environ.get("DATABASE_URL")
 
 if database_url and database_url.startswith("postgres://"):
