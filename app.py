@@ -1,19 +1,12 @@
 from flask import Flask
 from models import db
 import os
-
+from dotenv import load_dotenv
 from routes import routes
 from routes_admin import routes_admin
 
-
+load_dotenv()
 app = Flask(__name__)
-
-
-app.secret_key = os.environ.get(
-    "SECRET_KEY",
-    "development-secret-key"
-)
-
 
 
 database_url = os.environ.get("DATABASE_URL")
@@ -22,6 +15,13 @@ if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace(
         "postgres://",
         "postgresql://",
+        1
+    )
+
+if database_url and database_url.startswith("postgresql://"):
+    database_url = database_url.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
         1
     )
 
