@@ -132,24 +132,60 @@ class Appointment(db.Model):
     __tablename__ = 'appointments'
 
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    patient_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False
+    )
+
+    doctor_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False
+    )
+
     appointment_date = db.Column(db.DateTime, nullable=False)
     appointment_time = db.Column(db.Time, nullable=False)
+
     reason = db.Column(db.String(200), nullable=True)
-    status = db.Column(db.String(50), nullable=False, default='scheduled')
+    status = db.Column(
+        db.String(50),
+        nullable=False,
+        default='scheduled'
+    )
+
     diagnosis = db.Column(db.Text, nullable=True)
     prescription = db.Column(db.Text, nullable=True)
 
-    # patient = db.relationship('Patient', back_populates='appointments')
-    # doctor = db.relationship('User', back_populates='doctor_appointments')
-    # pt = db.relationship('User', back_populates='pt_appointments')
-    treatment_entry = db.relationship('Treatment', back_populates='appointment', uselist=False)
-    patient = db.relationship('User', foreign_keys=[patient_id], back_populates='appointments_as_patient')
+    # Prevent two appointments for the same doctor,
+    # date and time
+    __table_args__ = (
+        db.UniqueConstraint(
+            'doctor_id',
+            'appointment_date',
+            'appointment_time',
+            name='uq_doctor_appointment_slot'
+        ),
+    )
+
+    treatment_entry = db.relationship(
+        'Treatment',
+        back_populates='appointment',
+        uselist=False
+    )
+
+    patient = db.relationship(
+        'User',
+        foreign_keys=[patient_id],
+        back_populates='appointments_as_patient'
+    )
+
     doctor = db.relationship(
-    'User',
-    foreign_keys=[doctor_id],
-    back_populates='doctor_appointments')
+        'User',
+        foreign_keys=[doctor_id],
+        back_populates='doctor_appointments'
+    )
 
  
 class Treatment(db.Model):

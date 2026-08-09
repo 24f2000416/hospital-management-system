@@ -20,8 +20,6 @@ def index():
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-# route for registration
-from flask_login import login_user
 
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
@@ -86,7 +84,10 @@ def register():
         db.session.commit()
 
         # Automatically log in the newly registered patient
-        login_user(user)
+        session.clear()
+        session['user_id'] = user.id
+        session['username'] = user.username
+        session['role'] = user.role
 
         flash(
             "Registration successful!",
@@ -287,37 +288,46 @@ def add_department():
     return render_template("add_department.html")
 
 
-
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
 # route for adding doctor by admin
 @routes.route('/admin_dashboard/add_doctor', methods=["GET", "POST"])
 @role_required("admin")
 def add_doctor():
     department = Department.query.all()
+
     if request.method == "POST":
-        
+
         doctor_experience = request.form['exp'].strip()
         doctor_qualification = request.form['Qualification'].strip()
         username = request.form['username'].strip()
-        email = request.form['email'].strip()
+        email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
-          # fixed role
+
+        # fixed role
         department_id = request.form['department_id'].strip() or None
         phone = request.form['phone'].strip() or None
 
         # check if doctor already exists
         existing = User.query.filter_by(email=email).first()
+
         if existing:
-            error = "Doctor with this ID already exists."
-            return render_template("add_doctor.html", error_message=error)
+            error = "Doctor with this email already exists."
+            return render_template(
+                "add_doctor.html",
+                error_message=error,
+                departments=department
+            )
+
+        # Hash password before storing it
+        hashed_password = generate_password_hash(password)
 
         # add new doctor
         new_doctor = User(
-            
             username=username,
             email=email,
-            password=password,
-            drexperience = doctor_experience,
-            drqualification = doctor_qualification,
+            password=hashed_password,
+            drexperience=doctor_experience,
+            drqualification=doctor_qualification,
             role='doctor',
             department_id=department_id,
             phone=phone
@@ -326,12 +336,28 @@ def add_doctor():
         try:
             db.session.add(new_doctor)
             db.session.commit()
+
             return redirect(url_for("routes.admin_dashboard"))
+
         except Exception as e:
             db.session.rollback()
-            return render_template("add_doctor.html", error_message="Something went wrong. Try again.")
 
-    return render_template("add_doctor.html",departments=department)
+            current_app.logger.exception(
+                "Error while adding doctor"
+            )
+
+            return render_template(
+                "add_doctor.html",
+                error_message="Something went wrong. Try again.",
+                departments=department
+            )
+
+    return render_template(
+        "add_doctor.html",
+        departments=department
+    )
+
+
 
 
 
@@ -340,14 +366,22 @@ def add_doctor():
 @routes.route('/admin_dashboard/delete_doctor/<int:doctor_id>', methods=['POST'])
 @role_required("admin")
 def delete_doctor(doctor_id):
-    doctor = User.query.get_or_404(doctor_id)
+    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
     try:
         db.session.delete(doctor)
         db.session.commit()
         flash('Doctor deleted successfully.', 'success')
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(f'Error deleting doctor: {e}', 'danger')
+
+        current_app.logger.exception(
+            "Error deleting doctor"
+        )
+
+        flash(
+            "Unable to delete doctor. Please try again.",
+            "danger"
+        )
     return redirect(url_for('routes.admin_dashboard'))
 
 
@@ -357,7 +391,7 @@ def delete_doctor(doctor_id):
 @routes.route('/admin_dashboard/delete_patient/<int:patient_id>', methods=['POST'])
 @role_required("admin")
 def delete_3264_patient(patient_id):
-    patient = User.query.get_or_404(patient_id)
+    patient = User.query.filter_by(id=patient_id,role="patient").first_or_404()
     try:
         db.session.delete(patient)
         db.session.commit()
@@ -374,7 +408,7 @@ def delete_3264_patient(patient_id):
 @routes.route('/admin_dashboard/blacklist_patient/<int:patient_id>', methods=['POST'])
 @role_required("admin")
 def blacklist_3264_patient(patient_id):
-    patient = User.query.get_or_404(patient_id)
+    patient = User.query.filter_by(id=patient_id,role="patient").first_or_404()
     try:
         patient.blacklisted = True
         db.session.commit()
@@ -387,7 +421,7 @@ def blacklist_3264_patient(patient_id):
 @routes.route('/admin_dashboard/blacklist_doctor/<int:doctor_id>', methods=['POST'])
 @role_required("admin")
 def blacklist_doctor(doctor_id):
-    doctor = User.query.get_or_404(doctor_id)
+    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
     try:
         doctor.blacklisted = True
         db.session.commit()
@@ -402,14 +436,23 @@ def blacklist_doctor(doctor_id):
 @routes.route('/admin_dashboard/edit_doctor/<int:doctor_id>', methods=['GET', 'POST'])
 @role_required("admin")
 def edit_doctor(doctor_id):
-    doctor = User.query.get_or_404(doctor_id)
+    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
     departments = Department.query.all()
  
         # handling post method
     if request.method == 'POST':
         doctor.username = request.form['username'].strip()
         doctor.email = request.form['email'].strip()
-        doctor.password = request.form['password'].strip()
+        new_password = request.form.get('password', '').strip()
+
+        if new_password:
+            if len(new_password) < 8:
+                flash("Password must contain at least 8 characters.", "danger")
+                return redirect(
+                    url_for('routes.edit_doctor', doctor_id=doctor_id)
+                )
+
+            doctor.password = generate_password_hash(new_password)
         doctor.drexperience = request.form['exp'].strip()
         doctor.drqualification = request.form['Qualification'].strip()
         doctor.department_id = request.form['department_id'].strip() or None
@@ -428,27 +471,72 @@ def edit_doctor(doctor_id):
 
 
 # route for editing patient by admin
-@routes.route('/admin_dashboard/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
+@routes.route(
+    '/admin_dashboard/edit_patient/<int:patient_id>',
+    methods=['GET', 'POST']
+)
 @role_required("admin")
 def edit_3264_patient(patient_id):
-    patient = User.query.get_or_404(patient_id)
-    
-    # handling post methodhandling post method
+
+    patient = User.query.filter_by(
+        id=patient_id,
+        role="patient"
+    ).first_or_404()
+
     if request.method == 'POST':
+
         patient.username = request.form['username'].strip()
         patient.email = request.form['email'].strip()
-        patient.password = request.form['password'].strip()
         patient.phone = request.form['phone'].strip() or None
+
+        # Update password only if admin entered a new password
+        new_password = request.form.get('password', '').strip()
+
+        if new_password:
+            if len(new_password) < 8:
+                flash(
+                    "Password must contain at least 8 characters.",
+                    "danger"
+                )
+                return redirect(
+                    url_for(
+                        'routes.edit_3264_patient',
+                        patient_id=patient_id
+                    )
+                )
+
+            patient.password = generate_password_hash(
+                new_password
+            )
 
         try:
             db.session.commit()
-            flash('patient updated successfully.', 'success')
-            return redirect(url_for('routes.admin_dashboard'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error updating patient: {e}', 'danger')
 
-    return render_template('edit_3264_patient.html', patient=patient)
+            flash(
+                'Patient updated successfully.',
+                'success'
+            )
+
+            return redirect(
+                url_for('routes.admin_dashboard')
+            )
+
+        except Exception:
+            db.session.rollback()
+
+            current_app.logger.exception(
+                "Error updating patient"
+            )
+
+            flash(
+                'Unable to update patient. Please try again.',
+                'danger'
+            )
+
+    return render_template(
+        'edit_3264_patient.html',
+        patient=patient
+    )
 
 
 
@@ -499,6 +587,7 @@ from datetime import time, date
 
 # patient dashboard route
 @routes.route('/patient_dashboard')
+@role_required("patient")
 def patient_dashboard():
     doctors = User.query.filter_by(role='doctor')
     today = datetime.today().date() 
@@ -546,6 +635,7 @@ def patient_dashboard():
 
 # routes for viewing doctors by patient based on department on patient dashboard
 @routes.route('/patient_dashboard/view_doctors_by_patient/<int:dept_id>/doctors')
+@role_required("patient")
 def view_doctors_by_patient(dept_id):
     department = Department.query.get_or_404(dept_id)
     doctors = User.query.filter_by(department_id=dept_id, role='doctor').all()
@@ -553,19 +643,22 @@ def view_doctors_by_patient(dept_id):
 
 # route for viewing doctor details by patient
 @routes.route('/patient_dashboard/view_doctors_by_patient/doctor_detail_by_patient/<int:doctor_id>')
+@role_required("patient")
 def doctor_detail_by_patient(doctor_id):
-    doctor = User.query.get_or_404(doctor_id)
+    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
     return render_template('doctor_detail_by_patient.html', doctor=doctor)
 
 
 # route for cancelling appointment by patient
 @routes.route('/patient_dashboard/cancel_apt_by_pt/<int:appointment_id>', methods=["POST"])
+@role_required("patient")
 def cancel_apt_by_pt(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
-    
-    if appointment.patient_id != session.get('user_id'):
-        flash('Unauthorized action.', 'danger')
-        return redirect(url_for('routes.patient_dashboard'))
+    patient_id = session["user_id"]
+
+    appointment = Appointment.query.filter_by(
+    id=appointment_id,
+    patient_id=patient_id,
+    status='scheduled').first_or_404()
     
     # Extract date only if DoctorAvailability.date is Date type
     apt_date = appointment.appointment_date.date()  # datetime.date object
@@ -585,22 +678,34 @@ def cancel_apt_by_pt(appointment_id):
         )
         db.session.add(doctor_slot)
 
-    # Mark the correct slot as available
-    if appointment.appointment_time == time(9, 0, 0):
-        doctor_slot.morning = True
-    else:
-        doctor_slot.evening = True
-
-    db.session.commit()
 
     # Delete the appointment
     try:
         appointment.status = 'cancelled'
+
+        if appointment.appointment_time == time(9, 0, 0):
+            doctor_slot.morning = True
+        else:
+            doctor_slot.evening = True
+
         db.session.commit()
-        flash('Appointment cancelled successfully.', 'success')
-    except Exception as e:
+
+        flash(
+            'Appointment cancelled successfully.',
+            'success'
+        )
+
+    except Exception:
         db.session.rollback()
-        flash(f'Error cancelling appointment: {e}', 'danger')
+
+        current_app.logger.exception(
+            "Error cancelling patient appointment"
+        )
+
+        flash(
+            'Unable to cancel appointment.',
+            'danger'
+        )
 
     return redirect(url_for('routes.patient_dashboard'))
 
@@ -611,9 +716,10 @@ def cancel_apt_by_pt(appointment_id):
 from datetime import date
 # route for checking doctor availability by patient
 @routes.route('/view_doctor_by_patient/check_avail_by_patient/<int:doctor_id>', methods=['GET', 'POST'])
+@role_required("patient")
 def check_avail_by_patient(doctor_id):
 
-    doctor = User.query.get_or_404(doctor_id)
+    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
 
     today = date.today()
 
@@ -656,43 +762,129 @@ def check_avail_by_patient(doctor_id):
         availabilities=availabilities
     )
 
+
+from sqlalchemy.exc import IntegrityError
 # route for booking appointment by patient
-@routes.route('/check_avail_by_patient/booking_appointment/<int:doctor_id>', methods=['POST'])
+@routes.route(
+    '/check_avail_by_patient/booking_appointment/<int:doctor_id>',
+    methods=['POST']
+)
+@role_required("patient")
 def booking_appointment(doctor_id):
-    print("booking appointment called")
-  
+
     patient_id = session.get('user_id')
+
     if not patient_id:
         return redirect(url_for('routes.login'))
 
+    # Make sure the ID in the URL actually belongs to a doctor
+    doctor = User.query.filter_by(
+        id=doctor_id,
+        role="doctor"
+    ).first_or_404()
+
     # Get chosen slot from form
     selected = request.form.get("slot")
+
     if not selected:
         flash("Please select a slot.", "danger")
-        return redirect(url_for('routes.check_avail_by_patient', doctor_id=doctor_id))
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
 
-    # slot format = "YYYY-MM-DD|morning" or "YYYY-MM-DD|evening"
-    date_str, slot_type = selected.split("|")
-    appointment_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    # slot format = "YYYY-MM-DD|morning"
+    # or "YYYY-MM-DD|evening"
+    try:
+        date_str, slot_type = selected.split("|", 1)
+
+        appointment_date = datetime.strptime(
+            date_str,
+            "%Y-%m-%d"
+        ).date()
+
+    except (ValueError, TypeError):
+        flash("Invalid appointment slot.", "danger")
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
+
+    # Validate slot type
+    if slot_type not in ("morning", "evening"):
+        flash("Invalid appointment slot.", "danger")
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
 
     # Set appointment time
     if slot_type == "morning":
-        appointment_time = datetime.strptime("09:00", "%H:%M").time()
+        appointment_time = time(9, 0)
     else:
-        appointment_time = datetime.strptime("17:00", "%H:%M").time()
+        appointment_time = time(17, 0)
 
     # Check if already booked
     existing = Appointment.query.filter_by(
-        doctor_id=doctor_id,
-        appointment_date=appointment_date,
-        appointment_time=appointment_time
-    ).first()
+    doctor_id=doctor_id,
+    appointment_date=appointment_date,
+    appointment_time=appointment_time,
+    status='scheduled').first()
 
     if existing:
-        flash("You have already booked this slot.", "warning")
-        return redirect(url_for('routes.check_avail_by_patient', doctor_id=doctor_id))
+        flash("This slot is already booked.", "warning")
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
 
-    # Create NEW appointment
+    # Find doctor's availability
+    slot = DoctorAvailability.query.filter_by(
+        doctor_id=doctor_id,
+        date=appointment_date
+    ).first()
+
+    if not slot:
+        flash("This appointment slot is not available.", "danger")
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
+
+    # Make sure the selected slot is actually available
+    if slot_type == "morning":
+
+        if not slot.morning:
+            flash("Morning slot is already booked.", "warning")
+            return redirect(
+                url_for(
+                    'routes.check_avail_by_patient',
+                    doctor_id=doctor_id
+                )
+            )
+
+    else:
+
+        if not slot.evening:
+            flash("Evening slot is already booked.", "warning")
+            return redirect(
+                url_for(
+                    'routes.check_avail_by_patient',
+                    doctor_id=doctor_id
+                )
+            )
+
+    # Create appointment
     new_appt = Appointment(
         patient_id=patient_id,
         doctor_id=doctor_id,
@@ -701,55 +893,125 @@ def booking_appointment(doctor_id):
         reason="General Checkup",
         status="scheduled"
     )
-    print(new_appt)
-    db.session.add(new_appt)
-    db.session.commit()
 
-    # Mark slot as booked
-    slot = DoctorAvailability.query.filter_by(
-        doctor_id=doctor_id,
-        date=appointment_date
-    ).first()
+    try:
 
-    if slot_type == "morning":
-        slot.morning = False
-    else:
-        slot.evening = False
+        # Mark slot as booked
+        if slot_type == "morning":
+            slot.morning = False
+        else:
+            slot.evening = False
 
-    db.session.commit()
+        # Add appointment
+        db.session.add(new_appt)
+
+        # ONE commit for both operations
+        db.session.commit()
+
+    except IntegrityError:
+
+        db.session.rollback()
+
+        flash(
+            "This appointment slot was just booked by another patient.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
+
+    except Exception:
+
+        db.session.rollback()
+
+        current_app.logger.exception(
+            "Error while booking appointment"
+        )
+
+        flash(
+            "Unable to book appointment. Please try again.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                'routes.check_avail_by_patient',
+                doctor_id=doctor_id
+            )
+        )
 
     flash("Appointment booked successfully!", "success")
-    return redirect(url_for('routes.patient_dashboard'))
+
+    return redirect(
+        url_for('routes.patient_dashboard')
+    )
 
 
 # route for editing patient profile by patient
 @routes.route('/patient_dashboard/edit_profile_by_patient', methods=['GET', 'POST'])
+@role_required("patient")
 def edit_profile_by_patient():
     patient_id = session.get('user_id')
     patient = User.query.get_or_404(patient_id)
 
     if request.method == 'POST':
+
         patient.username = request.form['username'].strip()
         patient.email = request.form['email'].strip()
-        patient.password = request.form['password'].strip()
         patient.phone = request.form['phone'].strip() or None
+
+        new_password = request.form.get('password', '').strip()
+
+        if new_password:
+            if len(new_password) < 8:
+                flash(
+                    "Password must contain at least 8 characters.",
+                    "danger"
+                )
+                return redirect(
+                    url_for("routes.edit_profile_by_patient")
+                )
+
+            patient.password = generate_password_hash(
+                new_password
+            )
 
         try:
             db.session.commit()
-            flash('Profile updated successfully.', 'success')
-            return redirect(url_for('routes.patient_dashboard'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error updating profile: {e}', 'danger')
-    doctors = User.query.filter_by(role='doctor').all()
-    patients = User.query.filter_by(role='patient').all()
-    appointments = Appointment.query.all()
-    departments=Department.query.all()
-    return render_template('edit_profile_by_patient.html',departments=departments,doctors=doctors,patients=patients,appointments=appointments,patient=patient)
 
+            flash(
+                'Profile updated successfully.',
+                'success'
+            )
+
+            return redirect(
+                url_for('routes.patient_dashboard')
+            )
+
+        except Exception:
+            db.session.rollback()
+
+            current_app.logger.exception(
+                "Error updating patient profile"
+            )
+
+            flash(
+                'Unable to update profile.',
+                'danger'
+            )
+
+    return render_template(
+        'edit_profile_by_patient.html',
+        patient=patient
+    )
 
 # route for viewing patient history by patient
 @routes.route('/patient_dashboard/history_patient')
+@role_required("patient")
 def history_patient():
     patient_id = session.get('user_id')
     patient = User.query.get_or_404(patient_id)
@@ -764,6 +1026,7 @@ def history_patient():
 
 # # doctor dashboard route
 @routes.route('/doctor_dashboard')
+@role_required("doctor")
 def doctor_dashboard():
     assigned_patients = (
     Appointment.query
@@ -782,6 +1045,7 @@ def doctor_dashboard():
 
 
 @routes.route('/doctor/availability', methods=['GET', 'POST'])
+@role_required("doctor")
 def doctor_availability():
     doctor_id = session.get('user_id')
     if not doctor_id:
@@ -878,39 +1142,51 @@ def doctor_availability():
 
 
 # route for marking appointment as complete by doctor
-@routes.route('/patient_dashboard/mark_as_complete_by_dr/<int:appointment_id>')
+@routes.route('/doctor_dashboard/mark_as_complete/<int:appointment_id>',methods=['POST'])
+@role_required("doctor")
 def mark_as_complete_by_dr(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
+
+    doctor_id = session["user_id"]
+
+    appointment = Appointment.query.filter_by(
+    id=appointment_id,
+    doctor_id=doctor_id,
+    status='scheduled').first_or_404()
+
     appointment.status = 'completed'
+
     slot = DoctorAvailability.query.filter_by(
-        doctor_id=appointment.doctor_id,
+        doctor_id=doctor_id,
         date=appointment.appointment_date.date()
     ).first()
-    
-    if appointment.appointment_time == time(9, 0, 0):
-        slot.morning = True
-    else:
-        slot.evening = True
-    db.session.commit()
-    
-    
+
+    if slot:
+        if appointment.appointment_time == time(9, 0, 0):
+            slot.morning = True
+        else:
+            slot.evening = True
+
     try:
         db.session.commit()
         flash('Appointment completed', 'success')
-        return redirect(url_for('routes.doctor_dashboard'))
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(f'Error int marking complete: {e}', 'danger')
+        flash('Error marking appointment complete.', 'danger')
 
     return redirect(url_for('routes.doctor_dashboard'))
 
 
 # route for adding treatment record by doctor
-@routes.route('/doctor_dashboard/add_treatment/<int:appointment_id>', methods=["GET", "POST"])
+@routes.route('/doctor_dashboard/add_treatment/<int:appointment_id>',methods=["GET", "POST"])
+@role_required("doctor")
 def add_treatment(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
+
+    doctor_id = session["user_id"]
+    appointment = Appointment.query.filter_by(
+        id=appointment_id,
+        doctor_id=doctor_id
+    ).first_or_404()
     patient_id = appointment.patient_id
-    doctor_id = appointment.doctor_id
 
     # Count previous treatments for this patient by this doctor
     previous_visits = (
@@ -934,39 +1210,96 @@ def add_treatment(appointment_id):
             medicines=request.form.get("medicines")
         )
 
-        db.session.add(treatment)
-        db.session.commit()
+        try:
+            db.session.add(treatment)
+            db.session.commit()
 
-        flash("Treatment record added successfully!", "success")
-        return redirect(url_for("routes.doctor_dashboard"))
+            flash(
+                "Treatment record added successfully!",
+                "success"
+            )
+
+            return redirect(
+                url_for("routes.doctor_dashboard")
+            )
+
+        except Exception:
+            db.session.rollback()
+
+            current_app.logger.exception(
+                "Error adding treatment"
+            )
+
+            flash(
+                "Unable to add treatment record.",
+                "danger"
+            )
 
     return render_template("add_treatment.html", appointment=appointment,visit_number=next_visit_number)
 
 
 # route for cancelling appointment by doctor
-@routes.route('/patient_dashboard/cancel_treatment/<int:appointment_id>')
+@routes.route(
+    '/doctor_dashboard/cancel_appointment/<int:appointment_id>',
+    methods=['POST']
+)
+@role_required("doctor")
 def cancel_apt_by_dr(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
+
+    doctor_id = session["user_id"]
+
+    appointment = Appointment.query.filter_by(
+    id=appointment_id,
+    doctor_id=doctor_id,
+    status='scheduled').first_or_404()
+
     slot = DoctorAvailability.query.filter_by(
-        doctor_id=appointment.doctor_id,
+        doctor_id=doctor_id,
         date=appointment.appointment_date.date()
     ).first()
-    if appointment.appointment_time == time(9, 0, 0):
-        slot.morning = True
-    else:
-        slot.evening = True
-    db.session.commit()
+
+    if not slot:
+        flash(
+            "Doctor availability record not found.",
+            "danger"
+        )
+        return redirect(url_for('routes.doctor_dashboard'))
+
     try:
+        # Mark appointment as cancelled
         appointment.status = 'cancelled'
+
+        # Make the corresponding slot available again
+        if appointment.appointment_time == time(9, 0, 0):
+            slot.morning = True
+        else:
+            slot.evening = True
+
+        # ONE commit for both changes
         db.session.commit()
-        flash('Appointment cancelled successfully.', 'success')
-    except Exception as e:
+
+        flash(
+            'Appointment cancelled successfully.',
+            'success'
+        )
+
+    except Exception:
         db.session.rollback()
-        flash(f'Error cancelling appointment: {e}', 'danger')
+
+        current_app.logger.exception(
+            "Error cancelling appointment by doctor"
+        )
+
+        flash(
+            'Unable to cancel appointment. Please try again.',
+            'danger'
+        )
+
     return redirect(url_for('routes.doctor_dashboard'))
     
 # route for viewing patient history by doctor
 @routes.route('/doctor_dashboard/view_patient_history/<int:patient_id>')
+@role_required("doctor")
 def pt_history_by_doctor(patient_id):   
     treatments = Treatment.query.join(Appointment).filter(Appointment.patient_id == patient_id , Appointment.doctor_id == session.get('user_id'),Appointment.status == 'completed').all()
     return render_template('pt_history_by_doctor.html', treatments=treatments)

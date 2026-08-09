@@ -1247,6 +1247,159 @@
         }
 
 
+
+
+        /* =========================================================
+           FLASH MESSAGES
+           ========================================================= */
+
+        .flash-container {
+            width: 92%;
+            max-width: 1240px;
+            margin: 18px auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            z-index: 900;
+        }
+
+        .flash-message {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px 16px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 7px;
+            box-shadow: var(--shadow-small);
+            font-size: 12px;
+            font-weight: 600;
+            animation: flashSlideIn 0.25s ease;
+        }
+
+        .flash-message.success {
+            border-left-color: var(--success);
+        }
+
+        .flash-message.success .flash-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .flash-message.danger {
+            border-left-color: #dc2626;
+        }
+
+        .flash-message.danger .flash-icon {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .flash-message.warning {
+            border-left-color: #d97706;
+        }
+
+        .flash-message.warning .flash-icon {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .flash-message.info {
+            border-left-color: var(--primary);
+        }
+
+        .flash-message.info .flash-icon {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .flash-message.danger .flash-icon {
+            background: #3b1d22;
+            color: #f87171;
+        }
+
+        [data-theme="dark"] .flash-message.warning .flash-icon {
+            background: #3a2d16;
+            color: #fbbf24;
+        }
+
+        .flash-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .flash-icon {
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .flash-text {
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .flash-close {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 3px 5px;
+            flex-shrink: 0;
+            transition: 0.2s ease;
+        }
+
+        .flash-close:hover {
+            color: var(--text);
+            transform: scale(1.1);
+        }
+
+        @keyframes flashSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .flash-container {
+                width: 94%;
+                margin-top: 12px;
+            }
+
+            .flash-message {
+                padding: 11px 12px;
+                font-size: 11px;
+            }
+
+            .flash-icon {
+                width: 23px;
+                height: 23px;
+                font-size: 10px;
+            }
+        }
+
         /* RESPONSIVE */
 
         @media (max-width: 1000px) {
@@ -1420,6 +1573,50 @@
 
 
 <body>
+
+    <!-- =====================================================
+         FLASH MESSAGES
+         ===================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        <div class="flash-content">
+                            <div class="flash-icon">
+                                {% if category == "success" %}
+                                    ✓
+                                {% elif category == "danger" %}
+                                    !
+                                {% elif category == "warning" %}
+                                    !
+                                {% elif category == "info" %}
+                                    i
+                                {% else %}
+                                    •
+                                {% endif %}
+                            </div>
+
+                            <div class="flash-text">
+                                {{ message }}
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="flash-close"
+                            onclick="this.parentElement.remove()"
+                            aria-label="Close message"
+                        >
+                            ×
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
 
 
     <nav>
