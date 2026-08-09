@@ -1,177 +1,2748 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>CarePlus Multispeciality Hospital</title>
-  <style>
-    body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    justify-content: center;
-    background:
-        linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1)),
-        url('https://th.bing.com/th/id/OIP.16B-iLuLe6W2OqLprBKFzQHaFY?w=218&h=180&c=7&r=0&o=7&cb=ucfimgc2&dpr=1.3&pid=1.7&rm=3')
-        no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-}
 
-/* dark overlay */
-.overlay {
-    background: rgba(0,0,0,0.5);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* navigation bar */
-nav {
-    background: rgba(0,60,120,0.9);
-    padding: 12px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    <title>CarePlus | Hospital Management System</title>
 
-nav .logo {
-    font-size: 20px;
-    font-weight: bold;
-}
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("careplus-theme");
 
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-    margin: 0;
-    padding: 0;
-}
+            if (savedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
 
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 15px;
-    transition: 0.2s ease;
-}
+    <style>
 
-nav ul li a:hover {
-    color: #cfe3ff;
-}
+        :root {
+            --bg: #f4f5fa;
+            --bg-secondary: #eceef6;
+            --surface: #ffffff;
+            --surface-soft: #f8f9fc;
+            --surface-hover: #f0f1f7;
 
-/* hero section */
-.hero {
-    text-align: center;
-    margin: 15% auto 0;
-    max-width: 700px;
-    padding: 0 15px;
-}
+            --text: #182033;
+            --text-secondary: #647089;
+            --text-muted: #8b95a8;
 
-.hero h1 {
-    font-size: 38px;
-    margin-bottom: 10px;
-}
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #e8e7ff;
 
-.hero p {
-    font-size: 17px;
-    color: #e0e0e0;
-    line-height: 1.5;
-    margin-bottom: 30px;
-}
+            --accent: #818cf8;
+            --border: #dde1eb;
+            --border-light: #e8eaf0;
 
-/* buttons */
-.btn-group a {
-    display: inline-block;
-    padding: 10px 22px;
-    margin: 5px;
-    border-radius: 4px;
-    background: #007bff;
-    color: #fff;
-    text-decoration: none;
-}
+            --success: #059669;
+            --success-bg: #e9f8f2;
 
-.btn-group a:hover {
-    background: #005fb3;
-}
+            --shadow: 0 12px 35px rgba(31, 41, 55, 0.07);
+            --shadow-small: 0 5px 18px rgba(31, 41, 55, 0.05);
+        }
 
-/* facilities section */
-.facilities {
-    background: rgba(255,255,255,0.1);
-    max-width: 800px;
-    margin: 60px auto;
-    padding: 25px 20px;
-    border-radius: 8px;
-    text-align: center;
-}
 
-.facilities h2 {
-    margin-bottom: 15px;
-}
+        [data-theme="dark"] {
 
-.facilities ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: #ddd;
-    font-size: 15px;
-    line-height: 1.8;
-}
+            --bg: #111522;
+            --bg-secondary: #171b2b;
+            --surface: #1b2030;
+            --surface-soft: #202536;
+            --surface-hover: #252b3d;
 
-/* footer */
-footer {
-    text-align: center;
-    font-size: 13px;
-    color: #ccc;
-    margin-top: 60px;
-    padding-bottom: 20px;
-}
+            --text: #f1f5f9;
+            --text-secondary: #aab3c5;
+            --text-muted: #788398;
 
-  </style>
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --primary-light: #292c52;
+
+            --accent: #a5b4fc;
+            --border: #30374a;
+            --border-light: #272d3e;
+
+            --success: #34d399;
+            --success-bg: #12382f;
+
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            --shadow-small: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            transition:
+                background 0.25s ease,
+                color 0.25s ease;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        .container {
+            width: 92%;
+            max-width: 1240px;
+            margin: auto;
+        }
+
+
+        .section {
+            padding: 75px 0;
+        }
+
+
+        .section-header {
+            max-width: 720px;
+            margin-bottom: 40px;
+        }
+
+
+        .section-label {
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 9px;
+        }
+
+
+        .section-header h2 {
+            font-size: 31px;
+            line-height: 1.2;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 650px;
+        }
+
+
+        /* NAVIGATION */
+
+        nav {
+            height: 68px;
+            background: color-mix(
+                in srgb,
+                var(--surface) 92%,
+                transparent
+            );
+
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            backdrop-filter: blur(15px);
+
+            transition:
+                background 0.25s ease,
+                border 0.25s ease;
+        }
+
+
+        .nav-container {
+            width: 92%;
+            max-width: 1240px;
+            margin: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 19px;
+            font-weight: 800;
+
+            color: var(--text);
+        }
+
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 15px;
+            font-weight: 800;
+
+            box-shadow:
+                0 7px 17px rgba(79, 70, 229, 0.22);
+        }
+
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+
+            list-style: none;
+        }
+
+
+        .nav-links a {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+
+        .nav-login {
+            padding: 8px 15px;
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            color: var(--text) !important;
+        }
+
+
+        .nav-login:hover {
+            border-color: var(--accent);
+            background: var(--primary-light);
+        }
+
+
+        .nav-register {
+            padding: 9px 16px;
+
+            border-radius: 6px;
+
+            background: var(--primary);
+            color: white !important;
+        }
+
+
+        .nav-register:hover {
+            background: var(--primary-dark);
+        }
+
+
+        /* THEME BUTTON */
+
+        .theme-toggle {
+            width: 34px;
+            height: 34px;
+
+            border: 1px solid var(--border);
+            background: var(--surface);
+
+            color: var(--text-secondary);
+
+            border-radius: 7px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .theme-toggle:hover {
+            background: var(--surface-hover);
+            color: var(--primary);
+            border-color: var(--accent);
+        }
+
+
+        .theme-icon {
+            line-height: 1;
+        }
+
+
+        /* HERO */
+
+        .hero {
+            padding: 76px 0 65px;
+
+            background:
+                radial-gradient(
+                    circle at 85% 15%,
+                    rgba(129, 140, 248, 0.17),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 10% 90%,
+                    rgba(99, 102, 241, 0.07),
+                    transparent 25%
+                ),
+                var(--bg);
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .hero-grid {
+            display: grid;
+
+            grid-template-columns:
+                1.08fr
+                0.92fr;
+
+            gap: 65px;
+
+            align-items: center;
+        }
+
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: var(--primary);
+
+            background: var(--primary-light);
+
+            border: 1px solid color-mix(
+                in srgb,
+                var(--primary) 25%,
+                transparent
+            );
+
+            padding: 6px 11px;
+
+            border-radius: 5px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 18px;
+        }
+
+
+        .hero-label span {
+            width: 6px;
+            height: 6px;
+
+            background: var(--primary);
+
+            border-radius: 50%;
+        }
+
+
+        .hero h1 {
+            font-size: 48px;
+
+            line-height: 1.08;
+
+            letter-spacing: -1.7px;
+
+            color: var(--text);
+
+            max-width: 700px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+
+        .hero-description {
+            max-width: 650px;
+
+            color: var(--text-secondary);
+
+            font-size: 15px;
+
+            line-height: 1.8;
+
+            margin-bottom: 27px;
+        }
+
+
+        .hero-buttons {
+            display: flex;
+            gap: 10px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .primary-btn {
+            background: var(--primary);
+
+            color: white;
+
+            padding: 11px 21px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition: 0.2s ease;
+
+            box-shadow:
+                0 6px 16px rgba(79, 70, 229, 0.18);
+        }
+
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+
+        .secondary-btn {
+            background: var(--surface);
+
+            color: var(--text);
+
+            border: 1px solid var(--border);
+
+            padding: 10px 21px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition: 0.2s ease;
+        }
+
+
+        .secondary-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+        }
+
+
+        /* DASHBOARD PREVIEW */
+
+        .dashboard-preview {
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            padding: 17px;
+
+            box-shadow: var(--shadow);
+
+            transition:
+                background 0.25s ease,
+                border 0.25s ease;
+        }
+
+
+        .preview-top {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 3px 3px 15px;
+        }
+
+
+        .preview-title {
+            font-size: 12px;
+
+            font-weight: 750;
+
+            color: var(--text);
+        }
+
+
+        .preview-status {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: var(--success);
+
+            font-size: 9px;
+
+            font-weight: 700;
+        }
+
+
+        .preview-status span {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: var(--success);
+        }
+
+
+        .dashboard-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 9px;
+        }
+
+
+        .dashboard-card {
+            padding: 15px;
+
+            border-radius: 7px;
+
+            background: var(--surface-soft);
+
+            border: 1px solid var(--border-light);
+        }
+
+
+        .dashboard-card-label {
+            font-size: 9px;
+
+            color: var(--text-muted);
+
+            margin-bottom: 6px;
+        }
+
+
+        .dashboard-card-value {
+            font-size: 20px;
+
+            font-weight: 800;
+
+            color: var(--text);
+        }
+
+
+        .dashboard-card-info {
+            font-size: 9px;
+
+            color: var(--text-muted);
+
+            margin-top: 3px;
+        }
+
+
+        .preview-list {
+            margin-top: 9px;
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 7px;
+
+            overflow: hidden;
+        }
+
+
+        .preview-list-title {
+            padding: 10px 12px;
+
+            background: var(--surface-soft);
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            color: var(--text);
+
+            border-bottom: 1px solid var(--border-light);
+        }
+
+
+        .preview-row {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 10px 12px;
+
+            border-bottom: 1px solid var(--border-light);
+        }
+
+
+        .preview-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .preview-row-main {
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .preview-avatar {
+            width: 26px;
+            height: 26px;
+
+            border-radius: 6px;
+
+            background: var(--primary-light);
+
+            color: var(--primary);
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 9px;
+
+            font-weight: 800;
+        }
+
+
+        .preview-row-name {
+            font-size: 10px;
+
+            font-weight: 700;
+
+            color: var(--text);
+        }
+
+
+        .preview-row-detail {
+            font-size: 8px;
+
+            color: var(--text-muted);
+        }
+
+
+        .preview-tag {
+            font-size: 8px;
+
+            padding: 4px 7px;
+
+            border-radius: 4px;
+
+            background: var(--success-bg);
+
+            color: var(--success);
+
+            font-weight: 700;
+        }
+
+
+        /* QUICK ACCESS */
+
+        .quick-access {
+            background: var(--surface);
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .quick-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            border-left: 1px solid var(--border);
+        }
+
+
+        .quick-item {
+            padding: 20px 22px;
+
+            border-right: 1px solid var(--border);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+
+        .quick-number {
+            color: var(--primary);
+
+            font-size: 19px;
+
+            font-weight: 800;
+        }
+
+
+        .quick-text strong {
+            display: block;
+
+            font-size: 11px;
+
+            color: var(--text);
+        }
+
+
+        .quick-text span {
+            display: block;
+
+            font-size: 9px;
+
+            color: var(--text-muted);
+
+            margin-top: 2px;
+        }
+
+
+        /* ROLES */
+
+        .roles-section {
+            background: var(--bg-secondary);
+        }
+
+
+        .role-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 17px;
+        }
+
+
+        .role-card {
+            position: relative;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: 9px;
+
+            padding: 26px;
+
+            overflow: hidden;
+
+            transition: 0.25s ease;
+        }
+
+
+        .role-card::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 3px;
+
+            background: var(--primary);
+        }
+
+
+        .role-card:hover {
+            transform: translateY(-4px);
+
+            border-color: var(--accent);
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .role-code {
+            font-size: 9px;
+
+            font-weight: 800;
+
+            color: var(--primary);
+
+            letter-spacing: 1.2px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .role-card h3 {
+            font-size: 19px;
+
+            color: var(--text);
+
+            margin-bottom: 8px;
+        }
+
+
+        .role-card-description {
+            font-size: 12px;
+
+            color: var(--text-secondary);
+
+            line-height: 1.65;
+
+            min-height: 60px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .role-feature {
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 8px 0;
+
+            border-top: 1px solid var(--border-light);
+
+            font-size: 11px;
+        }
+
+
+        .role-feature span:first-child {
+            color: var(--text-secondary);
+        }
+
+
+        .role-feature span:last-child {
+            color: var(--primary);
+
+            font-weight: 700;
+        }
+
+
+        /* FEATURES */
+
+        .features-section {
+            background: var(--bg);
+        }
+
+
+        .feature-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 13px;
+        }
+
+
+        .feature-card {
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: 8px;
+
+            padding: 22px;
+
+            min-height: 170px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .feature-card:hover {
+            border-color: var(--accent);
+
+            box-shadow: var(--shadow-small);
+
+            transform: translateY(-2px);
+        }
+
+
+        .feature-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 17px;
+        }
+
+
+        .feature-number {
+            font-size: 9px;
+
+            font-weight: 800;
+
+            color: var(--primary);
+
+            letter-spacing: 1px;
+        }
+
+
+        .feature-line {
+            width: 35px;
+
+            height: 2px;
+
+            background: var(--primary-light);
+        }
+
+
+        .feature-card h3 {
+            font-size: 14px;
+
+            color: var(--text);
+
+            margin-bottom: 7px;
+        }
+
+
+        .feature-card p {
+            font-size: 11px;
+
+            color: var(--text-secondary);
+
+            line-height: 1.65;
+        }
+
+
+        /* WORKFLOW */
+
+        .workflow-section {
+            background: var(--surface);
+        }
+
+
+        .workflow-container {
+            border: 1px solid var(--border);
+
+            border-radius: 9px;
+
+            overflow: hidden;
+
+            background: var(--surface);
+        }
+
+
+        .workflow-header {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .workflow-step {
+            position: relative;
+
+            padding: 21px 16px;
+
+            text-align: center;
+
+            border-right: 1px solid var(--border);
+        }
+
+
+        .workflow-step:last-child {
+            border-right: none;
+        }
+
+
+        .workflow-number {
+            color: var(--primary);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            margin-bottom: 6px;
+        }
+
+
+        .workflow-step h3 {
+            color: var(--text);
+
+            font-size: 12px;
+
+            margin-bottom: 4px;
+        }
+
+
+        .workflow-step p {
+            color: var(--text-muted);
+
+            font-size: 9px;
+
+            line-height: 1.5;
+        }
+
+
+        .workflow-arrow {
+            position: absolute;
+
+            right: -5px;
+
+            top: 50%;
+
+            width: 9px;
+            height: 9px;
+
+            border-top: 1px solid var(--text-muted);
+
+            border-right: 1px solid var(--text-muted);
+
+            transform: rotate(45deg);
+
+            background: var(--surface);
+
+            z-index: 2;
+        }
+
+
+        .workflow-footer {
+            padding: 16px 20px;
+
+            background: var(--surface-soft);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+
+        .workflow-footer span {
+            color: var(--text-secondary);
+
+            font-size: 10px;
+        }
+
+
+        .workflow-footer strong {
+            color: var(--primary);
+
+            font-size: 10px;
+        }
+
+
+        /* MANAGEMENT */
+
+        .management-section {
+            background: var(--bg-secondary);
+        }
+
+
+        .management-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+        }
+
+
+        .management-card {
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: 9px;
+
+            padding: 26px;
+        }
+
+
+        .management-card h3 {
+            color: var(--text);
+
+            font-size: 17px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .management-card > p {
+            color: var(--text-secondary);
+
+            font-size: 12px;
+
+            line-height: 1.65;
+
+            margin-bottom: 18px;
+        }
+
+
+        .management-row {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 10px 0;
+
+            border-top: 1px solid var(--border-light);
+        }
+
+
+        .management-row span:first-child {
+            color: var(--text-secondary);
+
+            font-size: 11px;
+        }
+
+
+        .management-row span:last-child {
+            color: var(--primary);
+
+            font-size: 9px;
+
+            font-weight: 750;
+        }
+
+
+        /* CTA */
+
+        .cta {
+            background:
+                linear-gradient(
+                    120deg,
+                    #312e81,
+                    #4f46e5
+                );
+
+            padding: 62px 20px;
+
+            text-align: center;
+        }
+
+
+        .cta h2 {
+            color: white;
+
+            font-size: 29px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .cta p {
+            max-width: 650px;
+
+            margin: auto;
+
+            color: #e0e7ff;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+
+            margin-bottom: 24px;
+        }
+
+
+        .cta-button {
+            display: inline-block;
+
+            background: white;
+
+            color: #3730a3;
+
+            padding: 11px 23px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            transition: 0.2s ease;
+        }
+
+
+        .cta-button:hover {
+            background: #eef2ff;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* FOOTER */
+
+        footer {
+            background: #111522;
+
+            color: #7f8ba3;
+
+            padding: 26px 20px;
+
+            text-align: center;
+
+            font-size: 10px;
+        }
+
+
+        footer strong {
+            color: #e5e7eb;
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+
+                gap: 40px;
+            }
+
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+
+            .quick-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .feature-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 700px) {
+
+            .nav-container {
+                flex-direction: column;
+
+                gap: 13px;
+
+                padding: 13px 0;
+            }
+
+
+            nav {
+                height: auto;
+            }
+
+
+            .nav-links {
+                gap: 12px;
+
+                flex-wrap: wrap;
+
+                justify-content: center;
+            }
+
+
+            .hero {
+                padding: 58px 0;
+            }
+
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .workflow-header {
+                grid-template-columns: 1fr;
+            }
+
+
+            .workflow-step {
+                border-right: none;
+
+                border-bottom:
+                    1px solid var(--border);
+            }
+
+
+            .workflow-arrow {
+                display: none;
+            }
+
+
+            .workflow-footer {
+                flex-direction: column;
+
+                gap: 5px;
+
+                align-items: flex-start;
+            }
+
+
+            .section {
+                padding: 58px 0;
+            }
+
+
+            .section-header h2 {
+                font-size: 27px;
+            }
+        }
+
+
+        @media (max-width: 450px) {
+
+            .logo {
+                font-size: 17px;
+            }
+
+
+            .nav-links {
+                gap: 9px;
+            }
+
+
+            .nav-links a {
+                font-size: 10px;
+            }
+
+
+            .hero h1 {
+                font-size: 29px;
+            }
+
+
+            .hero-description {
+                font-size: 13px;
+            }
+
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+
+            .primary-btn,
+            .secondary-btn {
+                text-align: center;
+
+                width: 100%;
+            }
+
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
 </head>
-<body>
-  <div class="overlay">
 
-    <!-- Navbar -->
+
+<body>
+
+
     <nav>
-      <div class="logo">CarePlus Multispeciality Hospital</div>
-      <ul>
-        <li><a href="{{ url_for('routes.index') }}">Home</a></li>
-        <li><a href="{{ url_for('routes.login') }}">Login</a></li>
-        <li><a href="{{ url_for('routes.register') }}">Sign Up</a></li>
-      </ul>
+
+        <div class="nav-container">
+
+            <a
+                href="{{ url_for('routes.index') }}"
+                class="logo"
+            >
+
+                <div class="logo-mark">
+                    C
+                </div>
+
+                CarePlus
+
+            </a>
+
+
+            <ul class="nav-links">
+
+                <li>
+                    <a href="{{ url_for('routes.index') }}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#roles">
+                        Roles
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#features">
+                        Features
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#workflow">
+                        Workflow
+                    </a>
+                </li>
+
+                <li>
+
+                    <button
+                        class="theme-toggle"
+                        id="themeToggle"
+                        type="button"
+                        aria-label="Switch theme"
+                    >
+                        <span
+                            class="theme-icon"
+                            id="themeIcon"
+                        >
+                            ◐
+                        </span>
+                    </button>
+
+                </li>
+
+                <li>
+                    <a
+                        href="{{ url_for('routes.login') }}"
+                        class="nav-login"
+                    >
+                        Login
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        href="{{ url_for('routes.register') }}"
+                        class="nav-register"
+                    >
+                        Register
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
     </nav>
 
-    <!-- ✅ Content block for all pages -->
+
     {% block content %}
-    <!-- Default home page content -->
-    <div class="hero">
-      <h1>Welcome to CarePlus Hospital</h1>
-      <p>
-        CarePlus Multispeciality Hospital provides trusted and compassionate healthcare services
-        with modern medical technology and expert professionals.
-      </p>
-      <div class="btn-group">
-        <a href="{{ url_for('routes.login') }}">Login</a>
-        <a href="{{ url_for('routes.register') }}">Sign Up</a>
-      </div>
+
+
+    <section class="hero">
+
+        <div class="container hero-grid">
+
+
+            <div>
+
+                <div class="hero-label">
+
+                    <span></span>
+
+                    Hospital Management System
+
+                </div>
+
+
+                <h1>
+
+                    One Platform for
+                    <span>
+                        Complete Hospital Management.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    CarePlus is a role-based Hospital Management
+                    System connecting administrators, doctors, and
+                    patients through a centralized platform for
+                    departments, doctor availability, appointments,
+                    treatments, and patient records.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="{{ url_for('routes.login') }}"
+                        class="primary-btn"
+                    >
+                        Access Dashboard
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('routes.register') }}"
+                        class="secondary-btn"
+                    >
+                        Create Patient Account
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-preview">
+
+
+                <div class="preview-top">
+
+                    <div class="preview-title">
+                        System Overview
+                    </div>
+
+                    <div class="preview-status">
+
+                        <span></span>
+
+                        System Active
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-grid">
+
+
+                    <div class="dashboard-card">
+
+                        <div class="dashboard-card-label">
+                            USER ROLES
+                        </div>
+
+                        <div class="dashboard-card-value">
+                            03
+                        </div>
+
+                        <div class="dashboard-card-info">
+                            Admin, Doctor, Patient
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <div class="dashboard-card-label">
+                            APPOINTMENTS
+                        </div>
+
+                        <div class="dashboard-card-value">
+                            Booking
+                        </div>
+
+                        <div class="dashboard-card-info">
+                            Availability based
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <div class="dashboard-card-label">
+                            DEPARTMENTS
+                        </div>
+
+                        <div class="dashboard-card-value">
+                            Managed
+                        </div>
+
+                        <div class="dashboard-card-info">
+                            Centralized records
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <div class="dashboard-card-label">
+                            TREATMENTS
+                        </div>
+
+                        <div class="dashboard-card-value">
+                            Tracked
+                        </div>
+
+                        <div class="dashboard-card-info">
+                            Patient history
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="preview-list">
+
+
+                    <div class="preview-list-title">
+                        Core System Modules
+                    </div>
+
+
+                    <div class="preview-row">
+
+                        <div class="preview-row-main">
+
+                            <div class="preview-avatar">
+                                A
+                            </div>
+
+                            <div>
+
+                                <div class="preview-row-name">
+                                    Administration
+                                </div>
+
+                                <div class="preview-row-detail">
+                                    Users and departments
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="preview-tag">
+                            Admin
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-row">
+
+                        <div class="preview-row-main">
+
+                            <div class="preview-avatar">
+                                D
+                            </div>
+
+                            <div>
+
+                                <div class="preview-row-name">
+                                    Doctor Management
+                                </div>
+
+                                <div class="preview-row-detail">
+                                    Availability and treatments
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="preview-tag">
+                            Doctor
+                        </div>
+
+                    </div>
+
+
+                    <div class="preview-row">
+
+                        <div class="preview-row-main">
+
+                            <div class="preview-avatar">
+                                P
+                            </div>
+
+                            <div>
+
+                                <div class="preview-row-name">
+                                    Patient Services
+                                </div>
+
+                                <div class="preview-row-detail">
+                                    Booking and medical history
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="preview-tag">
+                            Patient
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="quick-access">
+
+        <div class="container">
+
+            <div class="quick-grid">
+
+
+                <div class="quick-item">
+
+                    <div class="quick-number">
+                        01
+                    </div>
+
+                    <div class="quick-text">
+
+                        <strong>
+                            User Management
+                        </strong>
+
+                        <span>
+                            Role-based access
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-item">
+
+                    <div class="quick-number">
+                        02
+                    </div>
+
+                    <div class="quick-text">
+
+                        <strong>
+                            Appointment System
+                        </strong>
+
+                        <span>
+                            Booking and tracking
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-item">
+
+                    <div class="quick-number">
+                        03
+                    </div>
+
+                    <div class="quick-text">
+
+                        <strong>
+                            Medical Records
+                        </strong>
+
+                        <span>
+                            Treatment history
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-item">
+
+                    <div class="quick-number">
+                        04
+                    </div>
+
+                    <div class="quick-text">
+
+                        <strong>
+                            Hospital Operations
+                        </strong>
+
+                        <span>
+                            Departments and doctors
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="facilities">
-      <h2>Our Core Facilities</h2>
-      <ul>
-        <li>24/7 Emergency and Trauma Care</li>
-        <li>Advanced Diagnostic and Imaging Center</li>
-        <li>Specialized Departments with Expert Doctors</li>
-        <li>Online Appointment Booking System</li>
-        <li>Fully Equipped ICU and Operation Theatres</li>
-        <li>Pharmacy and Laboratory Services</li>
-        <li>Digital Patient Records and Reports</li>
-      </ul>
-    </div>
+
+    <section
+        class="section roles-section"
+        id="roles"
+    >
+
+        <div class="container">
+
+
+            <div class="section-header">
+
+                <div class="section-label">
+                    User Roles
+                </div>
+
+                <h2>
+                    One Platform. Three Dedicated Experiences.
+                </h2>
+
+                <p>
+                    Every user gets access to the tools required
+                    for their responsibilities within the hospital.
+                </p>
+
+            </div>
+
+
+            <div class="role-grid">
+
+
+                <div class="role-card">
+
+                    <div class="role-code">
+                        ROLE / 01
+                    </div>
+
+                    <h3>
+                        Administrator
+                    </h3>
+
+                    <p class="role-card-description">
+                        Central control over hospital users,
+                        departments, doctors, and system records.
+                    </p>
+
+
+                    <div class="role-feature">
+                        <span>Doctor management</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Patient management</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Department management</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>User status control</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Record search</span>
+                        <span>Available</span>
+                    </div>
+
+                </div>
+
+
+                <div class="role-card">
+
+                    <div class="role-code">
+                        ROLE / 02
+                    </div>
+
+                    <h3>
+                        Doctor
+                    </h3>
+
+                    <p class="role-card-description">
+                        Manage availability, appointments,
+                        consultations, and patient treatment records.
+                    </p>
+
+
+                    <div class="role-feature">
+                        <span>Profile management</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Availability scheduling</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Appointment management</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Treatment records</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Patient history</span>
+                        <span>Available</span>
+                    </div>
+
+                </div>
+
+
+                <div class="role-card">
+
+                    <div class="role-code">
+                        ROLE / 03
+                    </div>
+
+                    <h3>
+                        Patient
+                    </h3>
+
+                    <p class="role-card-description">
+                        Find doctors, check availability,
+                        book appointments, and track treatment history.
+                    </p>
+
+
+                    <div class="role-feature">
+                        <span>Doctor search</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Availability checking</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Appointment booking</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Appointment cancellation</span>
+                        <span>Available</span>
+                    </div>
+
+                    <div class="role-feature">
+                        <span>Treatment history</span>
+                        <span>Available</span>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section
+        class="section features-section"
+        id="features"
+    >
+
+        <div class="container">
+
+
+            <div class="section-header">
+
+                <div class="section-label">
+                    Platform Features
+                </div>
+
+                <h2>
+                    Complete Hospital Workflow Management
+                </h2>
+
+                <p>
+                    The system covers the major operations required
+                    to coordinate patients, doctors, appointments,
+                    departments, and treatment records.
+                </p>
+
+            </div>
+
+
+            <div class="feature-grid">
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            01
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Role-Based Authentication
+                    </h3>
+
+                    <p>
+                        Dedicated access and dashboards for
+                        administrators, doctors, and patients.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            02
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Department Management
+                    </h3>
+
+                    <p>
+                        Create, manage, search, edit, and control
+                        hospital departments through administration.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            03
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Doctor Management
+                    </h3>
+
+                    <p>
+                        Manage doctor profiles, qualifications,
+                        experience, departments, and account status.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            04
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Availability Management
+                    </h3>
+
+                    <p>
+                        Doctors can configure their available
+                        morning and evening appointment slots.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            05
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Appointment Booking
+                    </h3>
+
+                    <p>
+                        Patients can select doctors, check available
+                        slots, and book appointments.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            06
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Appointment Tracking
+                    </h3>
+
+                    <p>
+                        Patients can track bookings while doctors
+                        manage upcoming and completed appointments.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            07
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Treatment Records
+                    </h3>
+
+                    <p>
+                        Doctors can add diagnosis, treatment,
+                        prescriptions, and medicines after consultation.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            08
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Patient History
+                    </h3>
+
+                    <p>
+                        Access previous appointment and treatment
+                        information through organized patient records.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            09
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Search and Filtering
+                    </h3>
+
+                    <p>
+                        Locate relevant doctors, patients,
+                        departments, and hospital records efficiently.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            10
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Profile Management
+                    </h3>
+
+                    <p>
+                        Doctors and patients can maintain their
+                        profile and account information.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            11
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        User Status Management
+                    </h3>
+
+                    <p>
+                        Administrators can manage account status
+                        and control access when required.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-top">
+
+                        <div class="feature-number">
+                            12
+                        </div>
+
+                        <div class="feature-line"></div>
+
+                    </div>
+
+                    <h3>
+                        Centralized Records
+                    </h3>
+
+                    <p>
+                        Patient, doctor, department, appointment,
+                        and treatment data are managed through one system.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section
+        class="section workflow-section"
+        id="workflow"
+    >
+
+        <div class="container">
+
+
+            <div class="section-header">
+
+                <div class="section-label">
+                    Patient Journey
+                </div>
+
+                <h2>
+                    From Doctor Search to Treatment History
+                </h2>
+
+                <p>
+                    The appointment lifecycle connects patient
+                    actions with doctor availability and treatment
+                    management.
+                </p>
+
+            </div>
+
+
+            <div class="workflow-container">
+
+
+                <div class="workflow-header">
+
+
+                    <div class="workflow-step">
+
+                        <div class="workflow-number">
+                            STEP 01
+                        </div>
+
+                        <h3>
+                            Register
+                        </h3>
+
+                        <p>
+                            Create patient account
+                        </p>
+
+                        <div class="workflow-arrow"></div>
+
+                    </div>
+
+
+                    <div class="workflow-step">
+
+                        <div class="workflow-number">
+                            STEP 02
+                        </div>
+
+                        <h3>
+                            Find Doctor
+                        </h3>
+
+                        <p>
+                            Select department and doctor
+                        </p>
+
+                        <div class="workflow-arrow"></div>
+
+                    </div>
+
+
+                    <div class="workflow-step">
+
+                        <div class="workflow-number">
+                            STEP 03
+                        </div>
+
+                        <h3>
+                            Check Slots
+                        </h3>
+
+                        <p>
+                            View doctor availability
+                        </p>
+
+                        <div class="workflow-arrow"></div>
+
+                    </div>
+
+
+                    <div class="workflow-step">
+
+                        <div class="workflow-number">
+                            STEP 04
+                        </div>
+
+                        <h3>
+                            Book
+                        </h3>
+
+                        <p>
+                            Select available appointment
+                        </p>
+
+                        <div class="workflow-arrow"></div>
+
+                    </div>
+
+
+                    <div class="workflow-step">
+
+                        <div class="workflow-number">
+                            STEP 05
+                        </div>
+
+                        <h3>
+                            Treatment
+                        </h3>
+
+                        <p>
+                            Record consultation and history
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="workflow-footer">
+
+                    <span>
+                        Patient and doctor activities remain connected
+                        throughout the appointment lifecycle.
+                    </span>
+
+                    <strong>
+                        CONNECTED WORKFLOW
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="section management-section">
+
+        <div class="container">
+
+
+            <div class="section-header">
+
+                <div class="section-label">
+                    System Architecture
+                </div>
+
+                <h2>
+                    Centralized Management for Every Role
+                </h2>
+
+                <p>
+                    Each part of the system contributes to a single
+                    connected hospital management workflow.
+                </p>
+
+            </div>
+
+
+            <div class="management-grid">
+
+
+                <div class="management-card">
+
+                    <h3>
+                        Administrative Operations
+                    </h3>
+
+                    <p>
+                        The administrator oversees the core
+                        hospital data and user management operations.
+                    </p>
+
+
+                    <div class="management-row">
+                        <span>Doctor management</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Patient management</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Department management</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Search and filtering</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Account status control</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                </div>
+
+
+                <div class="management-card">
+
+                    <h3>
+                        Clinical & Patient Operations
+                    </h3>
+
+                    <p>
+                        Doctors and patients interact through
+                        availability, appointment, and treatment workflows.
+                    </p>
+
+
+                    <div class="management-row">
+                        <span>Doctor availability</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Appointment booking</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Appointment management</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Treatment records</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                    <div class="management-row">
+                        <span>Patient history</span>
+                        <span>ACTIVE</span>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="cta">
+
+        <div class="container">
+
+            <h2>
+                Manage Your Hospital Through One Platform
+            </h2>
+
+            <p>
+                CarePlus connects administration, doctors,
+                patients, appointments, availability, and treatment
+                records into a single Hospital Management System.
+            </p>
+
+            <a
+                href="{{ url_for('routes.login') }}"
+                class="cta-button"
+            >
+                Access the System
+            </a>
+
+        </div>
+
+    </section>
+
+
     {% endblock %}
 
+
     <footer>
-      &copy; 2025 CarePlus Multispeciality Hospital. All rights reserved.
+
+        <strong>
+            CarePlus Multispeciality Hospital
+        </strong>
+
+        &nbsp; | &nbsp;
+
+        Hospital Management System
+
+        &nbsp; | &nbsp;
+
+        Role-Based Healthcare Management
+
+        &nbsp; | &nbsp;
+
+        &copy; 2026
+
     </footer>
 
-  </div>
+
+    <script>
+
+        const themeToggle =
+            document.getElementById("themeToggle");
+
+        const themeIcon =
+            document.getElementById("themeIcon");
+
+
+        function updateThemeIcon() {
+
+            const currentTheme =
+                document.documentElement.getAttribute("data-theme");
+
+            if (currentTheme === "dark") {
+
+                themeIcon.textContent = "☀";
+
+            } else {
+
+                themeIcon.textContent = "◐";
+
+            }
+
+        }
+
+
+        themeToggle.addEventListener(
+            "click",
+            function () {
+
+                const currentTheme =
+                    document.documentElement.getAttribute("data-theme");
+
+
+                if (currentTheme === "dark") {
+
+                    document.documentElement.removeAttribute(
+                        "data-theme"
+                    );
+
+                    localStorage.setItem(
+                        "careplus-theme",
+                        "light"
+                    );
+
+                } else {
+
+                    document.documentElement.setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+                    localStorage.setItem(
+                        "careplus-theme",
+                        "dark"
+                    );
+
+                }
+
+
+                updateThemeIcon();
+
+            }
+        );
+
+
+        updateThemeIcon();
+
+    </script>
+
+
 </body>
+
 </html>
