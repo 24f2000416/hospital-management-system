@@ -4,42 +4,99 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy() 
  
-class User(db.Model):
+from flask_login import UserMixin
+
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=True)
+    department_id = db.Column(
+        db.Integer,
+        db.ForeignKey('departments.id'),
+        nullable=True
+    )
 
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
-    role = db.Column(db.String(50), nullable=False) 
+    username = db.Column(
+        db.String(150),
+        unique=True,
+        nullable=False
+    )
 
-    phone = db.Column(db.String(20), nullable=True)
-    blacklisted = db.Column(db.Boolean, default=False)
-    drexperience = db.Column(db.Integer, nullable=True)  # years of experience for doctors
-    drqualification = db.Column(db.String(150), nullable=True)  # qualifications for doctors
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    email = db.Column(
+        db.String(150),
+        unique=True,
+        nullable=False
+    )
 
-    department = db.relationship('Department', back_populates='doctors')
-    
-    reviews_received = db.relationship('Review', back_populates='doctor')
-    availability_slots = db.relationship('DoctorAvailability', back_populates='doctor')
-    patient_profile = db.relationship('Patient', back_populates='user', uselist=False)
+    password = db.Column(
+        db.String(500),
+        nullable=False
+    )
+
+    role = db.Column(
+        db.String(50),
+        nullable=False
+    )
+
+    phone = db.Column(
+        db.String(20),
+        nullable=True
+    )
+
+    blacklisted = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    drexperience = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    drqualification = db.Column(
+        db.String(150),
+        nullable=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    department = db.relationship(
+        'Department',
+        back_populates='doctors'
+    )
+
+    reviews_received = db.relationship(
+        'Review',
+        back_populates='doctor'
+    )
+
+    availability_slots = db.relationship(
+        'DoctorAvailability',
+        back_populates='doctor'
+    )
+
+    patient_profile = db.relationship(
+        'Patient',
+        back_populates='user',
+        uselist=False
+    )
+
     appointments_as_patient = db.relationship(
         'Appointment',
         back_populates='patient',
         foreign_keys='Appointment.patient_id',
-         cascade="all, delete",
-          passive_deletes=True
-
-
+        cascade="all, delete",
+        passive_deletes=True
     )
-    doctor_appointments = db.relationship(
-    'Appointment',
-    back_populates='doctor',
-    foreign_keys='Appointment.doctor_id')
 
+    doctor_appointments = db.relationship(
+        'Appointment',
+        back_populates='doctor',
+        foreign_keys='Appointment.doctor_id'
+    )
 
 
  

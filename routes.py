@@ -17,81 +17,185 @@ routes = Blueprint('routes', __name__)
 def index():
     return render_template('base.html')
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 # route for registration
+from flask_login import login_user
+
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        phone = request.form.get('phone')
 
+    if request.method == 'POST':
+
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+        phone = request.form.get('phone', '').strip()
+
+        # Required fields
+        if not username or not email or not password:
+            flash(
+                "Username, email and password are required.",
+                "danger"
+            )
+            return redirect(url_for('routes.register'))
+
+        # Password validation
+        if len(password) < 8:
+            flash(
+                "Password must contain at least 8 characters.",
+                "danger"
+            )
+            return redirect(url_for('routes.register'))
+
+        # Phone validation
+        if len(phone) != 10 or not phone.isdigit():
+            flash(
+                "Phone number must contain exactly 10 digits.",
+                "danger"
+            )
+            return redirect(url_for('routes.register'))
+
+        # Check whether username or email already exists
+        existing_user = User.query.filter(
+            (User.username == username) |
+            (User.email == email)
+        ).first()
+
+        if existing_user:
+            flash(
+                "Username or email already exists.",
+                "danger"
+            )
+            return redirect(url_for('routes.register'))
+
+        # Hash password
+        hashed_password = generate_password_hash(password)
+
+        # Create new patient
         user = User(
             username=username,
             email=email,
-            password=password,
+            password=hashed_password,
             role='patient',
             phone=phone
         )
+
         db.session.add(user)
         db.session.commit()
-        flash("Registration successful! Please log in.", "success")
-        return redirect(url_for('routes.login'))
+
+        # Automatically log in the newly registered patient
+        login_user(user)
+
+        flash(
+            "Registration successful!",
+            "success"
+        )
+
+        # Change this to your patient's dashboard route
+        return redirect(url_for('routes.patient_dashboard'))
 
     departments = Department.query.all()
-    return render_template('register.html', departments=departments)
+
+    return render_template(
+        'register.html',
+        departments=departments
+    )
 
 
 # route for login
+from werkzeug.security import check_password_hash
+
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
-    doctors = User.query.filter_by(role='doctor').all() 
-    departments = Department.query.all()
-    
+
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+
         user = User.query.filter_by(email=email).first()
-        
-        # Check credentials and role
-        
-        # Admin login and forwarding to admin dashboard
-        if user.password == password and user.role == 'admin':
+
+        if user and check_password_hash(user.password, password):
+
             if user.blacklisted:
-                return render_template('login.html',mess="You are blacklisted. Contact admin.")
+                return render_template(
+                    'login.html',
+                    mess="You are blacklisted. Contact admin."
+                )
+
+            session.clear()
+
             session['user_id'] = user.id
             session['username'] = user.username
             session['role'] = user.role
-            return redirect(url_for('routes.admin_dashboard'))
-        
-        # Doctor login and forwarding to doctor dashboard
-        elif user.password == password and user.role == 'doctor':
-            if user.blacklisted:
-                return render_template('login.html',mess="You are blacklisted. Contact admin.")
-            session['department_id'] = user.department_id
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session['role'] = user.role
-            return redirect(url_for('routes.doctor_dashboard'))
-        
-        # Patient login and forwarding to patient dashboard
-        elif user.password == password and user.role == 'patient':
-            if user.blacklisted:
-                return render_template('login.html',mess="You are blacklisted. Contact admin.")
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session['role'] = user.role
-            return redirect(url_for('routes.patient_dashboard'))
-        else:
-            # return redirect(url_for('routes.index',))
-            return render_template('login.html',mess="Invalid credentials")
+
+            if user.role == 'admin':
+                return redirect(
+                    url_for('routes.admin_dashboard')
+                )
+
+            elif user.role == 'doctor':
+                session['department_id'] = user.department_id
+
+                return redirect(
+                    url_for('routes.doctor_dashboard')
+                )
+
+            elif user.role == 'patient':
+                return redirect(
+                    url_for('routes.patient_dashboard')
+                )
+
+            else:
+                session.clear()
+
+                return render_template(
+                    'login.html',
+                    mess="Invalid user role."
+                )
+
+        return render_template(
+            'login.html',
+            mess="Invalid credentials"
+        )
+
     return render_template('login.html')
 
 
+#  Authorization part
+from functools import wraps
+from flask import session, redirect, url_for, flash
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("user_id"):
+            flash("Please login first.", "danger")
+            return redirect(url_for("routes.login"))
+        return f(*args, **kwargs)
+    return decorated
+
+
+def role_required(*roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if not session.get("user_id"):
+                return redirect(url_for("routes.login"))
+
+            if session.get("role") not in roles:
+                flash("Unauthorized access.", "danger")
+                return redirect(url_for("routes.index"))
+
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
     
 # admin dashboard route with search functionality
 @routes.route('/admin', methods=['GET'])
+@role_required("admin")
 def admin_dashboard():
     query = request.args.get('query', '').strip()
 
@@ -148,6 +252,7 @@ def admin_dashboard():
 
 #  route for viewing patient history by admin
 @routes.route('/admin_dashboard/patient_history_by_admin/<int:patient_id>',methods=['GET'])
+@role_required("admin")
 def patient_history_by_admin(patient_id):
     patient = User.query.get_or_404(patient_id)
     appointments = Appointment.query.filter_by(patient_id=patient_id).all()
@@ -157,6 +262,7 @@ def patient_history_by_admin(patient_id):
 
 # route for adding department by admin
 @routes.route('/admin_dashboard/add_department', methods=["GET", "POST"])
+@role_required("admin")
 def add_department():
     if request.method == "POST":
         department_name = request.form['name'].strip()
@@ -184,6 +290,7 @@ def add_department():
 
 # route for adding doctor by admin
 @routes.route('/admin_dashboard/add_doctor', methods=["GET", "POST"])
+@role_required("admin")
 def add_doctor():
     department = Department.query.all()
     if request.method == "POST":
@@ -231,6 +338,7 @@ def add_doctor():
 
 # route for deleting doctor by admin
 @routes.route('/admin_dashboard/delete_doctor/<int:doctor_id>', methods=['POST'])
+@role_required("admin")
 def delete_doctor(doctor_id):
     doctor = User.query.get_or_404(doctor_id)
     try:
@@ -247,6 +355,7 @@ def delete_doctor(doctor_id):
 
 # route for deleting patient by admin
 @routes.route('/admin_dashboard/delete_patient/<int:patient_id>', methods=['POST'])
+@role_required("admin")
 def delete_3264_patient(patient_id):
     patient = User.query.get_or_404(patient_id)
     try:
@@ -263,6 +372,7 @@ def delete_3264_patient(patient_id):
 
 # route for blacklisting patient by admin
 @routes.route('/admin_dashboard/blacklist_patient/<int:patient_id>', methods=['POST'])
+@role_required("admin")
 def blacklist_3264_patient(patient_id):
     patient = User.query.get_or_404(patient_id)
     try:
@@ -275,6 +385,7 @@ def blacklist_3264_patient(patient_id):
     return redirect(url_for('routes.admin_dashboard'))
 
 @routes.route('/admin_dashboard/blacklist_doctor/<int:doctor_id>', methods=['POST'])
+@role_required("admin")
 def blacklist_doctor(doctor_id):
     doctor = User.query.get_or_404(doctor_id)
     try:
@@ -289,6 +400,7 @@ def blacklist_doctor(doctor_id):
 
 # route for editing doctor by admin
 @routes.route('/admin_dashboard/edit_doctor/<int:doctor_id>', methods=['GET', 'POST'])
+@role_required("admin")
 def edit_doctor(doctor_id):
     doctor = User.query.get_or_404(doctor_id)
     departments = Department.query.all()
@@ -317,6 +429,7 @@ def edit_doctor(doctor_id):
 
 # route for editing patient by admin
 @routes.route('/admin_dashboard/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
+@role_required("admin")
 def edit_3264_patient(patient_id):
     patient = User.query.get_or_404(patient_id)
     
@@ -342,6 +455,7 @@ def edit_3264_patient(patient_id):
 
 # routes for viewing doctors by admin based on department on admin dashboard
 @routes.route('/admin_dashboard/view_doctors_by_department/<int:dept_id>/doctors')
+@role_required("admin")
 def view_doctors_by_admin(dept_id):
     department = Department.query.get_or_404(dept_id)
     doctors = User.query.filter_by(department_id=dept_id, role='doctor').all()
@@ -350,6 +464,7 @@ def view_doctors_by_admin(dept_id):
 
 # routes for deleting department by admin
 @routes.route('/admin_dashboard/delete_department/<int:dept_id>', methods=['POST'])
+@role_required("admin")
 def delete_department(dept_id):
     department = Department.query.get_or_404(dept_id)
     try:
@@ -364,6 +479,7 @@ def delete_department(dept_id):
 
 # departmetn blacklist route
 @routes.route('/admin_dashboard/blacklist_department/<int:dept_id>', methods=['POST'])
+@role_required("admin")
 def blacklist_department(dept_id):
     department = Department.query.get_or_404(dept_id)
     try:
