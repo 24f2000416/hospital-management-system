@@ -1,137 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 
-<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Doctor Dashboard</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Dashboard | CarePlus</title>
+
+    <style>
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+
+            --background: #f4f5fa;
+            --surface: #ffffff;
+            --surface-alt: #f7f8fc;
+
+            --text: #111827;
+            --text-secondary: #374151;
+            --text-muted: #667085;
+
+            --border: #c7ccd8;
+            --border-light: #dfe3ea;
+
+            --success: #047857;
+            --success-bg: #ecfdf5;
+
+            --warning: #b45309;
+            --warning-bg: #fffbeb;
+
+            --danger: #b91c1c;
+            --danger-bg: #fef2f2;
+
+            --shadow: 0 5px 22px rgba(24, 32, 51, 0.08);
+            --shadow-small: 0 2px 8px rgba(24, 32, 51, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --background: #111827;
+            --surface: #1b2333;
+            --surface-alt: #202a3a;
+
+            --text: #f8fafc;
+            --text-secondary: #d1d5db;
+            --text-muted: #a1a9b8;
+
+            --border: #465268;
+            --border-light: #3b4659;
+
+            --primary-light: #292653;
+
+            --success: #34d399;
+            --success-bg: #12352c;
+
+            --warning: #fbbf24;
+            --warning-bg: #382b16;
+
+            --danger: #f87171;
+            --danger-bg: #351d22;
+
+            --shadow: 0 5px 22px rgba(0, 0, 0, 0.25);
+            --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .top-bar {
+            width: 100%;
+            min-height: 68px;
+            padding: 12px 4%;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            box-shadow: var(--shadow-small);
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--text);
+            text-decoration: none;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-mark {
+            width: 37px;
+            height: 37px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: auto;
+        }
+
+        .theme-btn {
+            width: 37px;
+            height: 37px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--surface);
+            color: var(--text);
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .theme-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .dashboard-btn {
+            height: 37px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 13px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            height: 37px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 13px;
+
+            background: var(--danger-bg);
+            color: var(--danger);
+
+            border: 1px solid #fecaca;
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .page {
+            width: 94%;
+            max-width: 1400px;
+            margin: 35px auto 70px;
+        }
+
+        .page-header {
+            margin-bottom: 27px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .page-label {
+            display: inline-block;
+
+            padding: 6px 10px;
+            margin-bottom: 9px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .page-header h1 {
+            margin: 0 0 7px;
+
+            color: var(--text);
+
+            font-size: 31px;
+            font-weight: 800;
+        }
+
+        .doctor-welcome {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0 10px;
+        }
+
+        .welcome-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .doctor-name {
+            display: inline-block;
+
+            padding: 7px 14px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid #cfd5f4;
+            border-radius: 7px;
+
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.08);
+        }
+
+        .page-header p {
+            margin: 0;
+
+            color: var(--text-secondary);
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 9px;
+        }
+
+        .availability-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 11px 15px;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border: 1px solid var(--primary);
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .availability-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .flash-container {
+            margin-bottom: 22px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 13px 16px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+
+            border-radius: 8px;
+
+            box-shadow: var(--shadow-small);
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .flash-message.success {
+            border-left-color: var(--success);
+        }
+
+        .flash-message.danger {
+            border-left-color: var(--danger);
+        }
+
+        .flash-message.warning {
+            border-left-color: var(--warning);
+        }
+
+        .flash-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flash-icon {
+            width: 26px;
+            height: 26px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 6px;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .flash-message.success .flash-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .flash-message.danger .flash-icon {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .flash-message.warning .flash-icon {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .flash-close {
+            border: none;
+            background: transparent;
+
+            color: var(--text-muted);
+
+            font-size: 18px;
+
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            padding: 20px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            box-shadow: var(--shadow);
+
+            display: flex;
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 9px;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .stat-label {
+            margin-bottom: 4px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            color: var(--text);
+
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .dashboard-section {
+            margin-bottom: 25px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            box-shadow: var(--shadow);
+
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 19px 22px;
+
+            background: var(--surface-alt);
+
+            border-bottom: 2px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 8px;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .section-heading p {
+            margin: 3px 0 0;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+        }
+
+        .section-count {
+            padding: 5px 9px;
+
+            background: var(--surface);
+            color: var(--text-secondary);
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            max-height: 500px;
+
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: var(--surface-alt);
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 13px 16px;
+
+            background: var(--surface);
+
+            color: var(--text-secondary);
+
+            border-bottom: 1px solid var(--border);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+
+            text-align: center;
+
+            white-space: nowrap;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 5;
+        }
+
+        td {
+            min-height: 52px;
+
+            padding: 12px 16px;
+
+            color: var(--text-secondary);
+
+            border-bottom: 1px solid var(--border-light);
+
+            font-size: 11px;
+
+            text-align: center;
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background: var(--surface-alt);
+        }
+
+        .id-badge {
+            display: inline-flex;
+
+            padding: 4px 7px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 5px;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .patient-name {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .date-cell {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .time-cell {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+
+            padding: 5px 8px;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .status.scheduled {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .status.completed {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status.cancelled {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+
+            background: currentColor;
+
+            border-radius: 50%;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 8px 11px;
+
+            border-radius: 5px;
+
+            text-decoration: none;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            border: 1px solid transparent;
+
+            cursor: pointer;
+
+            font-family: Arial, sans-serif;
+        }
+
+        .action-btn.update {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: #d8dcf5;
+        }
+
+        .action-btn.update:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .action-btn.cancel {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: #fecaca;
+        }
+
+        .action-btn.cancel:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .action-btn.view {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #dbeafe;
+        }
+
+        .action-btn.view:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .inline-form {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+
+        .scroll-hint {
+            padding: 9px 18px;
+
+            background: var(--surface-alt);
+
+            border-top: 1px solid var(--border);
+
+            color: var(--text-muted);
+
+            text-align: right;
+
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            width: 45px;
+            height: 45px;
+
+            margin: 0 auto 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--surface-alt);
+
+            border: 1px solid var(--border);
+
+            border-radius: 9px;
+
+            color: var(--text-muted);
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .empty-state strong {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+        }
+
+        .empty-state span {
+            font-size: 11px;
+        }
+
+        @media (max-width: 850px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .availability-btn {
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .top-bar {
+                flex-wrap: wrap;
+            }
+
+            .top-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .section-count {
+                align-self: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .doctor-welcome {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
 
 </head>
-<body justify-content="center" align="center">
-  <h1 style="text-align: center; font-family: Arial, sans-serif;">Doctor Dashboard</h1>
-<form action="{{ url_for('routes.logout') }}" method="get" style="position:absolute; top:20px; right:20px;">
-    <button type="submit" 
-    style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-    Logout</button>
-</form>
-
-<h2>Welcome, {{ session.username }}!</h2>
 
 
-<h1 style="text-align: center; font-family: Arial, sans-serif;">Upcoming Appointments</h1>
-<div style="width:80%; margin:0 auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; display:flex; justify-content:center; align-items:center;">
-
-  {% if appointments_future %}
-  <table style="width:100%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">Appointment ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Patient Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Patient History</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for apt in appointments_future %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.patient.username }}</td>
-
-        <td style="border:1px solid #ccc; padding:6px;">
-            <a href="{{ url_for('routes.add_treatment', appointment_id=apt.id) }}"
-              style="padding:6px 12px; background:#007bff; color:white; 
-              border-radius:4px; text-decoration:none;">
-               Update
-                  </a>
-
-        </td>
-        
-        <td style="border:1px solid #ccc; padding:6px;">
-          <a href="{{ url_for('routes.mark_as_complete_by_dr', appointment_id=apt.id) }}"
-              style="padding:6px 12px; background:#007bff; color:white; 
-              border-radius:4px; text-decoration:none;">
-               Mark as Complete
-                  </a>
-          <a href="{{ url_for('routes.cancel_apt_by_dr', appointment_id=apt.id) }}"
-              style="padding:6px 12px; background:#007bff; color:white; 
-              border-radius:4px; text-decoration:none;">
-               Cancel
-                  </a>
-          
-          
-
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No Upcoming Appointments found.</p>
-  {% endif %}
-
-</div>
+<body>
 
 
+<header class="top-bar">
+
+    <a
+        href="{{ url_for('routes.doctor_dashboard') }}"
+        class="brand"
+    >
+        <span class="brand-mark">C</span>
+        CarePlus
+    </a>
 
 
-<h1 style="text-align: center; font-family: Arial, sans-serif;">Assigned Patients</h1>
-<div style="width:80%; margin:0 auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; display:flex; justify-content:center; align-items:center;">
+    <div class="top-actions">
 
-  {% if assigned_patients %}
-  <table style="width:100%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-        
-      </tr>
-    </thead>
-    <tbody>
-      {% for assigned_patient in assigned_patients %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{assigned_patient.patient.username}}</td>
-        
-
-        <td style="border:1px solid #ccc; padding:6px;">
-        <a href="{{ url_for('routes.pt_history_by_doctor', patient_id=assigned_patient.patient_id) }}">
-          <button type="button">View</button>
+        <a
+            href="{{ url_for('routes.doctor_dashboard') }}"
+            class="dashboard-btn"
+        >
+            Dashboard
         </a>
-        </td>
-
-        
-        
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No Upcoming Appointments found.</p>
-  {% endif %}
-
-</div>
 
 
+        <button
+            type="button"
+            class="theme-btn"
+            id="themeToggle"
+            title="Toggle theme"
+        >
+            ☾
+        </button>
 
 
+        <a
+            href="{{ url_for('routes.logout') }}"
+            class="logout-btn"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</header>
 
 
+<main class="page">
 
 
+    <div class="page-header">
+
+        <div>
+
+            <div class="page-label">
+                Doctor Portal
+            </div>
+
+            <h1>
+                Doctor Dashboard
+            </h1>
+
+            <div class="doctor-welcome">
+
+                <span class="welcome-text">
+                    Welcome back,
+                </span>
+
+                <span class="doctor-name">
+                    Dr. {{ session['username'] }}
+                </span>
+
+            </div>
+
+            <p>
+                Manage your appointments, treatments, patient records
+                and availability from your dashboard.
+            </p>
+
+        </div>
 
 
+        <div class="header-actions">
+
+            <a
+                href="{{ url_for('routes.doctor_availability') }}"
+                class="availability-btn"
+            >
+                + Provide Availability
+            </a>
+
+        </div>
+
+    </div>
 
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+
+                        <div class="flash-content">
+
+                            <div class="flash-icon">
+
+                                {% if category == "success" %}
+                                    ✓
+                                {% elif category == "warning" %}
+                                    !
+                                {% elif category == "danger" %}
+                                    !
+                                {% else %}
+                                    i
+                                {% endif %}
+
+                            </div>
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+                        </div>
 
 
+                        <button
+                            type="button"
+                            class="flash-close"
+                            onclick="this.parentElement.remove()"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
 
 
+    <div class="stats-grid">
 
 
+        <div class="stat-card">
 
-<a href="{{ url_for('routes.doctor_availability') }}" 
-   class="button button-success"><button style="padding:6px 12px; margin:100px; background:#28a745; color:white; border:none; border-radius:4px; cursor:pointer;">
-   Provide Availability</button>
-</a>
+            <div class="stat-icon">
+                A
+            </div>
 
+            <div>
+
+                <div class="stat-label">
+                    Upcoming Appointments
+                </div>
+
+                <div class="stat-value">
+                    {{ appointments_future|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                P
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Assigned Patients
+                </div>
+
+                <div class="stat-value">
+                    {{ assigned_patients|groupby('patient_id')|list|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                +
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Availability
+                </div>
+
+                <div class="stat-value">
+                    Active
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if appointments_future %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    A
+                </div>
+
+                <div>
+
+                    <h2>
+                        Upcoming Appointments
+                    </h2>
+
+                    <p>
+                        Manage your scheduled patient visits
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <span class="section-count">
+                {{ appointments_future|length }} appointments
+            </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Appointment ID
+                        </th>
+
+                        <th>
+                            Patient
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for apt in appointments_future %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="id-badge">
+                                #{{ apt.id }}
+                            </span>
+
+                        </td>
+
+
+                        <td class="patient-name">
+
+                            {% if apt.patient %}
+                                {{ apt.patient.username }}
+                            {% else %}
+                                Patient #{{ apt.patient_id }}
+                            {% endif %}
+
+                        </td>
+
+
+                        <td class="date-cell">
+                            {{ apt.appointment_date }}
+                        </td>
+
+
+                        <td class="time-cell">
+                            {{ apt.appointment_time }}
+                        </td>
+
+
+                        <td>
+
+                            {% if apt.status == "scheduled" %}
+
+                                <span class="status scheduled">
+                                    <span class="status-dot"></span>
+                                    Scheduled
+                                </span>
+
+                            {% elif apt.status == "completed" %}
+
+                                <span class="status completed">
+                                    <span class="status-dot"></span>
+                                    Completed
+                                </span>
+
+                            {% elif apt.status == "cancelled" %}
+
+                                <span class="status cancelled">
+                                    <span class="status-dot"></span>
+                                    Cancelled
+                                </span>
+
+                            {% else %}
+
+                                <span class="status scheduled">
+                                    {{ apt.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="actions">
+
+                                {% if apt.status == "scheduled" %}
+
+                                    <a
+                                        href="{{ url_for('routes.add_treatment', appointment_id=apt.id) }}"
+                                        class="action-btn update"
+                                    >
+                                        Add Treatment
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('routes.cancel_apt_by_dr', appointment_id=apt.id) }}"
+                                        class="inline-form"
+                                        onsubmit="return confirm('Cancel this appointment?');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="action-btn cancel"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                    </form>
+
+
+                                {% elif apt.status == "completed" %}
+
+                                    <span class="status completed">
+                                        <span class="status-dot"></span>
+                                        Treatment Completed
+                                    </span>
+
+
+                                {% elif apt.status == "cancelled" %}
+
+                                    <span class="status cancelled">
+                                        <span class="status-dot"></span>
+                                        Cancelled
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if appointments_future|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view more appointments ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    {% else %}
+
+    <section class="dashboard-section">
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                A
+            </div>
+
+            <strong>
+                No upcoming appointments
+            </strong>
+
+            <span>
+                You currently have no upcoming scheduled appointments.
+            </span>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    {% if assigned_patients %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    P
+                </div>
+
+                <div>
+
+                    <h2>
+                        Assigned Patients
+                    </h2>
+
+                    <p>
+                        Patients currently assigned to you
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <span class="section-count">
+                {{ assigned_patients|groupby('patient_id')|list|length }} patients
+            </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Patient ID
+                        </th>
+
+                        <th>
+                            Patient Name
+                        </th>
+
+                        <th>
+                            Patient History
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for patient_id, patient_records in assigned_patients|groupby('patient_id') %}
+
+                    {% set assigned_patient = patient_records|list|first %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="id-badge">
+                                #{{ patient_id }}
+                            </span>
+
+                        </td>
+
+
+                        <td class="patient-name">
+
+                            {{ assigned_patient.patient.username }}
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{{ url_for('routes.pt_history_by_doctor', patient_id=patient_id) }}"
+                                    class="action-btn view"
+                                >
+                                    View History
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if assigned_patients|groupby('patient_id')|list|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view more patients ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    {% else %}
+
+    <section class="dashboard-section">
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                P
+            </div>
+
+            <strong>
+                No assigned patients
+            </strong>
+
+            <span>
+                Patients assigned to you will appear here.
+            </span>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+</main>
+
+
+<script>
+
+    const themeButton =
+        document.getElementById("themeToggle");
+
+    const root =
+        document.documentElement;
+
+    const savedTheme =
+        localStorage.getItem("careplus-theme");
+
+
+    if (savedTheme) {
+
+        root.setAttribute(
+            "data-theme",
+            savedTheme
+        );
+
+    }
+
+
+    function updateThemeIcon() {
+
+        const currentTheme =
+            root.getAttribute("data-theme");
+
+        themeButton.textContent =
+            currentTheme === "dark"
+                ? "☀"
+                : "☾";
+
+    }
+
+
+    updateThemeIcon();
+
+
+    themeButton.addEventListener(
+        "click",
+        function () {
+
+            const currentTheme =
+                root.getAttribute("data-theme");
+
+            const newTheme =
+                currentTheme === "dark"
+                    ? "light"
+                    : "dark";
+
+            root.setAttribute(
+                "data-theme",
+                newTheme
+            );
+
+            localStorage.setItem(
+                "careplus-theme",
+                newTheme
+            );
+
+            updateThemeIcon();
+
+        }
+    );
+
+</script>
 
 
 </body>
+
 </html>

@@ -1,78 +1,773 @@
-<html>
-<head>
-  <title>Patient History</title>
-    <style>
-       body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
+<!-- PAGE HEADER -->
 
-h2 {
-    text-align: center;
-    color: #333;
-}
+<div class="history-header">
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+    <!-- TOP ROW -->
 
-th, td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: left;
-}
+    <div class="history-top-row">
 
-th {
-    background: #eee;
-    font-weight: bold;
-}
+        <div class="careplus-badge">
+            CarePlus
+        </div>
 
-tr:nth-child(even) {
-    background: #f9f9f9;
-}
+        <a
+            href="{{ url_for('routes.patient_dashboard') }}"
+            class="back-btn"
+        >
+            ← Back
+        </a>
 
-    </style>
-</head>
-<body>
-  <h2>Patient History</h2>
-  <form action="{{ url_for('routes.doctor_dashboard') }}" method="get"
-        style="position:absolute; top:20px; right:20px;">
-      <button style="padding:5px 12px; background:#c0392b; color:white; border:none;
-                     border-radius:4px; cursor:pointer;">
-          Back
-      </button>
-    </form>
-  
-  <table>
-    <thead>
-      <tr>
-        
-        <th>Visit Date</th>
-        <th>Visit Number</th>
-        <th>Visit Type</th>
-        <th>Prescription</th>
-        <th>Diagnosis</th>
-        <th>Medicines</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% if treatments%}
-      {% for entry in treatments %}
-      <tr>
-        
-        <td>{{ entry.visit_date.strftime('%Y-%m-%d') }}</td>
-        <td>{{ entry.visit_number }}</td>
-        <td>{{ entry.visit_type }}</td>
-        <td>{{ entry.prescription or "N/A" }}</td>
-        <td>{{ entry.diagnosis_text or "N/A" }}</td>
-        <td>{{ entry.medicines or "N/A" }}</td>
+    </div>
 
-      </tr>
-      {% endfor %}
-      {% endif %}
-    </tbody>
-  </table>
+
+    <h2>
+        Treatment History
+    </h2>
+
+    <div class="history-subtitle">
+        Patient treatment and medical records
+    </div>
+
+</div>
+
+
+<!-- PATIENT INFORMATION -->
+
+<div class="patient-info-card">
+
+    <div class="patient-info-header">
+
+        <div>
+
+            <div class="patient-label">
+                Patient Information
+            </div>
+
+            <div class="patient-name">
+                {{ patient.username }}
+            </div>
+
+        </div>
+
+        <div class="patient-icon">
+            P
+        </div>
+
+    </div>
+
+
+    <div class="patient-details">
+
+        <div class="detail-item">
+
+            <span class="detail-label">
+                Patient Name
+            </span>
+
+            <span class="detail-value">
+                {{ patient.username }}
+            </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <span class="detail-label">
+                Email
+            </span>
+
+            <span class="detail-value">
+                {{ patient.email }}
+            </span>
+
+        </div>
+
+
+        <div class="detail-item">
+
+            <span class="detail-label">
+                Phone
+            </span>
+
+            <span class="detail-value">
+                {{ patient.phone if patient.phone else "Not Provided" }}
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TREATMENT CARD -->
+
+<div class="history-card">
+
+    <div class="card-header">
+
+        <div class="card-title">
+            Treatment Records
+        </div>
+
+        <div class="record-badge">
+            Medical History
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Visit Date
+                    </th>
+
+                    <th>
+                        Visit Number
+                    </th>
+
+                    <th>
+                        Visit Type
+                    </th>
+
+                    <th>
+                        Prescription
+                    </th>
+
+                    <th>
+                        Diagnosis
+                    </th>
+
+                    <th>
+                        Medicines
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if treatments%}
+
+                {% for entry in treatments %}
+
+                <tr>
+
+                    <td>
+
+                        <span class="visit-date">
+                            {{ entry.visit_date.strftime('%Y-%m-%d') }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="visit-number">
+                            {{ entry.visit_number }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="visit-type">
+                            {{ entry.visit_type }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="medical-text">
+
+                            {% if entry.prescription %}
+
+                                {{ entry.prescription }}
+
+                            {% else %}
+
+                                <span class="na-value">
+                                    N/A
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="medical-text">
+
+                            {% if entry.diagnosis_text %}
+
+                                {{ entry.diagnosis_text }}
+
+                            {% else %}
+
+                                <span class="na-value">
+                                    N/A
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="medical-text">
+
+                            {% if entry.medicines %}
+
+                                {{ entry.medicines }}
+
+                            {% else %}
+
+                                <span class="na-value">
+                                    N/A
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+
+        padding: 35px 25px;
+
+        font-family: Arial, sans-serif;
+
+        background: #f4f5fa;
+
+        color: #111827;
+    }
+
+
+    /* MAIN HEADER */
+
+    .history-header {
+        width: 100%;
+
+        max-width: 1200px;
+
+        margin: 0 auto 22px;
+    }
+
+
+    .history-top-row {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin-bottom: 15px;
+    }
+
+
+    .careplus-badge {
+        display: inline-block;
+
+        padding: 7px 12px;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        border: 1px solid #d8dcf5;
+
+        border-radius: 7px;
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        letter-spacing: 0.8px;
+
+        text-transform: uppercase;
+    }
+
+
+    /* BACK BUTTON */
+
+    .back-btn {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 9px 15px;
+
+        background: #ffffff;
+
+        color: #4f46e5;
+
+        border: 1px solid #c7ccd8;
+
+        border-radius: 7px;
+
+        text-decoration: none;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        transition: 0.2s ease;
+    }
+
+
+    .back-btn:hover {
+        background: #eef2ff;
+
+        border-color: #4f46e5;
+
+        transform: translateX(-2px);
+    }
+
+
+    .history-header h2 {
+        margin: 0;
+
+        text-align: center;
+
+        color: #111827;
+
+        font-size: 25px;
+
+        font-weight: 800;
+    }
+
+
+    .history-subtitle {
+        margin-top: 7px;
+
+        text-align: center;
+
+        color: #667085;
+
+        font-size: 11px;
+    }
+
+
+    /* PATIENT INFORMATION CARD */
+
+    .patient-info-card {
+        width: 100%;
+
+        max-width: 1200px;
+
+        margin: 0 auto 22px;
+
+        padding: 20px 22px;
+
+        background: #ffffff;
+
+        border: 1px solid #c7ccd8;
+
+        border-left: 4px solid #4f46e5;
+
+        border-radius: 12px;
+
+        box-shadow:
+            0 5px 22px rgba(24, 32, 51, 0.08);
+    }
+
+
+    .patient-info-header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 18px;
+    }
+
+
+    .patient-label {
+        margin-bottom: 5px;
+
+        color: #667085;
+
+        font-size: 9px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.7px;
+    }
+
+
+    .patient-name {
+        color: #111827;
+
+        font-size: 21px;
+
+        font-weight: 800;
+    }
+
+
+    .patient-icon {
+        width: 42px;
+
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        border: 1px solid #d8dcf5;
+
+        border-radius: 50%;
+
+        font-size: 14px;
+
+        font-weight: 800;
+    }
+
+
+    .patient-details {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 12px;
+    }
+
+
+    .detail-item {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 6px;
+
+        padding: 12px 14px;
+
+        background: #f7f8fc;
+
+        border: 1px solid #dfe3ea;
+
+        border-radius: 7px;
+    }
+
+
+    .detail-label {
+        color: #667085;
+
+        font-size: 9px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+
+    .detail-value {
+        color: #111827;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        word-break: break-word;
+    }
+
+
+    /* TREATMENT CARD */
+
+    .history-card {
+        width: 100%;
+
+        max-width: 1200px;
+
+        margin: 0 auto;
+
+        background: #ffffff;
+
+        border: 1px solid #c7ccd8;
+
+        border-radius: 12px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 5px 22px rgba(24, 32, 51, 0.08);
+    }
+
+
+    .card-header {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 16px 20px;
+
+        background: #f7f8fc;
+
+        border-bottom: 2px solid #c7ccd8;
+    }
+
+
+    .card-title {
+        color: #374151;
+
+        font-size: 12px;
+
+        font-weight: 800;
+    }
+
+
+    .record-badge {
+        padding: 5px 9px;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        border: 1px solid #d8dcf5;
+
+        border-radius: 5px;
+
+        font-size: 9px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+    }
+
+
+    /* TABLE */
+
+    .table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+    }
+
+
+    table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        margin: 0;
+
+        background: #ffffff;
+    }
+
+
+    th,
+    td {
+        padding: 14px 15px;
+
+        border-right: 1px solid #dfe3ea;
+
+        border-bottom: 1px solid #dfe3ea;
+
+        text-align: left;
+
+        vertical-align: top;
+    }
+
+
+    th {
+        background: #ffffff;
+
+        color: #374151;
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+
+        border-bottom: 2px solid #c7ccd8;
+
+        white-space: nowrap;
+    }
+
+
+    td {
+        color: #374151;
+
+        font-size: 11px;
+
+        font-weight: 500;
+
+        line-height: 1.5;
+    }
+
+
+    tr:nth-child(even) td {
+        background: #f7f8fc;
+    }
+
+
+    tbody tr:hover td {
+        background: #eef2ff;
+    }
+
+
+    th:last-child,
+    td:last-child {
+        border-right: none;
+    }
+
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* VISIT DATE */
+
+    .visit-date {
+        color: #111827;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+    }
+
+
+    /* VISIT NUMBER */
+
+    .visit-number {
+        display: inline-block;
+
+        min-width: 28px;
+
+        padding: 5px 8px;
+
+        background: #eef2ff;
+
+        color: #4f46e5;
+
+        border: 1px solid #d8dcf5;
+
+        border-radius: 5px;
+
+        text-align: center;
+
+        font-size: 10px;
+
+        font-weight: 800;
+    }
+
+
+    /* VISIT TYPE */
+
+    .visit-type {
+        color: #374151;
+
+        font-weight: 700;
+    }
+
+
+    .medical-text {
+        min-width: 130px;
+
+        color: #374151;
+
+        line-height: 1.6;
+    }
+
+
+    .na-value {
+        color: #98a2b3;
+
+        font-style: italic;
+    }
+
+
+    /* RESPONSIVE */
+
+    @media (max-width: 750px) {
+
+        body {
+            padding: 25px 12px;
+        }
+
+        .patient-details {
+            grid-template-columns: 1fr;
+        }
+
+        .patient-name {
+            font-size: 19px;
+        }
+
+        .history-header h2 {
+            font-size: 21px;
+        }
+
+        table {
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 11px 12px;
+        }
+
+    }
+
+</style>

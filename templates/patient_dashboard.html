@@ -1,129 +1,792 @@
-
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Patient Dashboard</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Dashboard | CarePlus</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f4f5fa;
+            color: #111827;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 25px 22px 45px;
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 18px;
+            background: #ffffff;
+            border: 1px solid #dfe3ea;
+            border-radius: 14px;
+            box-shadow: 0 6px 25px rgba(24,32,51,0.07);
+            margin-bottom: 25px;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #4f46e5;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 5px 12px rgba(79,70,229,0.22);
+        }
+
+        .brand-text h1 {
+            color: #111827;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: #667085;
+            font-size: 9px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-form {
+            margin: 0;
+        }
+
+        .nav-btn {
+            padding: 9px 13px;
+            background: #ffffff;
+            color: #374151;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            font-weight: 800;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: #eef2ff;
+            color: #4f46e5;
+            border-color: #c7ccd8;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.logout {
+            background: #fff5f5;
+            color: #b42318;
+            border-color: #fecaca;
+        }
+
+        .nav-btn.logout:hover {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .welcome-card {
+            position: relative;
+            overflow: hidden;
+            padding: 30px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg,#ffffff,#f8f9ff);
+            border: 1px solid #dfe3ea;
+            border-radius: 16px;
+            box-shadow: 0 7px 28px rgba(24,32,51,0.08);
+        }
+
+        .welcome-card::after {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            right: -75px;
+            top: -75px;
+            border-radius: 50%;
+            background: #eef2ff;
+        }
+
+        .welcome-label {
+            display: inline-block;
+            padding: 6px 10px;
+            margin-bottom: 11px;
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1px solid #d8dcf5;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .welcome-card h2 {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 7px;
+            color: #111827;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .welcome-card p {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            color: #667085;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .search-card {
+            padding: 18px 20px;
+            margin-bottom: 25px;
+            background: #ffffff;
+            border: 1px solid #dfe3ea;
+            border-radius: 13px;
+            box-shadow: 0 5px 20px rgba(24,32,51,0.06);
+        }
+
+        .search-title {
+            margin-bottom: 9px;
+            color: #374151;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 9px;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 13px;
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid #c7ccd8;
+            border-radius: 8px;
+            outline: none;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+        }
+
+        .search-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            background: #4f46e5;
+            color: #ffffff;
+            border: 1px solid #4f46e5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 800;
+            transition: 0.2s ease;
+        }
+
+        .search-btn:hover {
+            background: #3730a3;
+            transform: translateY(-1px);
+        }
+
+        .section-card {
+            margin-bottom: 25px;
+            background: #ffffff;
+            border: 1px solid #dfe3ea;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 5px 22px rgba(24,32,51,0.07);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 17px 20px;
+            background: #f8f9fc;
+            border-bottom: 2px solid #dfe3ea;
+        }
+
+        .section-heading {
+            color: #111827;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            margin-top: 3px;
+            color: #667085;
+            font-size: 9px;
+        }
+
+        .section-badge {
+            padding: 6px 9px;
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1px solid #d8dcf5;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 13px 15px;
+            border-right: 1px solid #e4e7ec;
+            border-bottom: 1px solid #e4e7ec;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #ffffff;
+            color: #475467;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            border-bottom: 2px solid #dfe3ea;
+        }
+
+        td {
+            color: #374151;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: #fafbfc;
+        }
+
+        tbody tr:hover td {
+            background: #eef2ff;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .department-name {
+            color: #111827;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .department-description {
+            max-width: 350px;
+            color: #667085;
+            line-height: 1.5;
+        }
+
+        .appointment-date {
+            color: #111827;
+            font-weight: 800;
+        }
+
+        .appointment-time {
+            color: #4f46e5;
+            font-weight: 700;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-scheduled {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .status-completed {
+            background: #ecfdf3;
+            color: #027a48;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #b42318;
+        }
+
+        .action-btn {
+            padding: 7px 11px;
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1px solid #d8dcf5;
+            border-radius: 7px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 9px;
+            font-weight: 800;
+            transition: 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #4f46e5;
+            color: #ffffff;
+            border-color: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .cancel-btn {
+            background: #fff5f5;
+            color: #b42318;
+            border-color: #fecaca;
+        }
+
+        .cancel-btn:hover {
+            background: #b42318;
+            color: #ffffff;
+            border-color: #b42318;
+        }
+
+        .empty-state {
+            padding: 30px;
+            color: #667085;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .page-footer {
+            padding-top: 5px;
+            color: #98a2b3;
+            text-align: center;
+            font-size: 9px;
+        }
+
+        @media (max-width: 800px) {
+
+            .page-container {
+                padding: 18px 12px 35px;
+            }
+
+            .top-navbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .brand-area {
+                justify-content: center;
+            }
+
+            .nav-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .welcome-card {
+                padding: 24px 20px;
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .nav-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-form {
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            table {
+                min-width: 750px;
+            }
+        }
+
+    </style>
 
 </head>
-<body justify-content="center" align="center">
-  <h1 style="text-align: center; font-family: Arial, sans-serif;">Patient Dashboard</h1>
 
-<div style="position:absolute; top:20px; right:20px; display:flex; gap:10px;">
+<body>
 
-    <form action="{{ url_for('routes.edit_profile_by_patient') }}" method="get">
-        <button type="submit"
-        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-        Edit Profile</button>
-    </form>
+<div class="page-container">
 
-    <form action="{{ url_for('routes.history_patient') }}" method="get">
-        <button type="submit"
-        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-        History</button>
-    </form>
+    <div class="top-navbar">
 
-    <form action="{{ url_for('routes.logout') }}" method="get">
-        <button type="submit"
-        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-        Logout</button>
-    </form>
+        <div class="brand-area">
+
+            <div class="brand-logo">
+                CP
+            </div>
+
+            <div class="brand-text">
+                <h1>CarePlus</h1>
+                <span>Patient Portal</span>
+            </div>
+
+        </div>
+
+        <div class="nav-actions">
+
+            <form action="{{ url_for('routes.edit_profile_by_patient') }}" method="get" class="nav-form">
+                <button type="submit" class="nav-btn">
+                    Edit Profile
+                </button>
+            </form>
+
+            <form action="{{ url_for('routes.history_patient') }}" method="get" class="nav-form">
+                <button type="submit" class="nav-btn">
+                    History
+                </button>
+            </form>
+
+            <form action="{{ url_for('routes.logout') }}" method="get" class="nav-form">
+                <button type="submit" class="nav-btn logout">
+                    Logout
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="welcome-card">
+
+        <div class="welcome-label">
+            CarePlus Patient Portal
+        </div>
+
+        <h2>
+            Welcome Back
+        </h2>
+
+        <p>
+            Find departments, explore doctors, manage your appointments
+            and access your healthcare information.
+        </p>
+
+    </div>
+
+
+    <div class="search-card">
+
+        <div class="search-title">
+            Search
+        </div>
+
+        <form method="GET" action="{{ url_for('routes.patient_dashboard') }}" class="search-form">
+
+            <input
+                type="text"
+                name="query"
+                class="search-input"
+                placeholder="Search departments or doctors..."
+                value="{{ query }}"
+            >
+
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="section-card">
+
+        <div class="section-header">
+
+            <div>
+                <div class="section-heading">
+                    Medical Departments
+                </div>
+
+                <div class="section-subtitle">
+                    Choose a department to find available doctors
+                </div>
+            </div>
+
+            <div class="section-badge">
+                Departments
+            </div>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th>Doctors</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if departments %}
+
+                    {% for department in departments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="department-name">
+                                {{ department.name }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="department-description">
+                                {{ department.description or "No description available." }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <a href="{{ url_for('routes.view_doctors_by_patient', dept_id=department.id) }}">
+
+                                <button type="button" class="action-btn">
+                                    View Doctors
+                                </button>
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            No departments found.
+                        </td>
+                    </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-card">
+
+        <div class="section-header">
+
+            <div>
+                <div class="section-heading">
+                    My Appointments
+                </div>
+
+                <div class="section-subtitle">
+                    Your upcoming scheduled appointments
+                </div>
+            </div>
+
+            <div class="section-badge">
+                Appointments
+            </div>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Appointment Date</th>
+                        <th>Appointment Time</th>
+                        <th>Doctor</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if appointments %}
+
+                    {% for appointment in appointments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="appointment-date">
+                                {{ appointment.appointment_date.strftime('%Y-%m-%d') }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="appointment-time">
+                                {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ appointment.doctor.username if appointment.doctor else appointment.doctor_id }}
+                        </td>
+
+                        <td>
+
+                            {% if appointment.status == 'scheduled' %}
+
+                                <span class="status status-scheduled">
+                                    Scheduled
+                                </span>
+
+                            {% elif appointment.status == 'completed' %}
+
+                                <span class="status status-completed">
+                                    Completed
+                                </span>
+
+                            {% elif appointment.status == 'cancelled' %}
+
+                                <span class="status status-cancelled">
+                                    Cancelled
+                                </span>
+
+                            {% else %}
+
+                                <span class="status">
+                                    {{ appointment.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <form
+                                action="{{ url_for('routes.cancel_apt_by_pt', appointment_id=appointment.id) }}"
+                                method="POST"
+                                style="margin:0;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="action-btn cancel-btn"
+                                    onclick="return confirm('Are you sure you want to cancel this appointment?');"
+                                >
+                                    Cancel
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            You currently have no scheduled appointments.
+                        </td>
+                    </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="page-footer">
+        CarePlus Healthcare Management System
+    </div>
 
 </div>
-
-
-  <div style="display:flex; justify-content:right; align-items:center; margin-top:30px;">
-    <form action="#" method="get" style="display:flex; align-items:center; gap:10px;">
-      <label for="search"><h2>Search:</h2></label>
-      <input type="text" id="search" name="query" 
-       value="{{ query or '' }}" 
-       placeholder="doctor, patient, appointment" style="padding:6px;">
-
-      <button type="submit" style="padding:6px 12px;">Search</button>
-    </form>
-  </div>
-
-
-
-<h2>Welcome, {{ session.username }}!</h2>
-
-<div style="width:80%; margin:0 auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; justify-content:center; align-items:center;">
-
-  {% if departments %}
-  <h1 style="text-align: center; font-family: Arial, sans-serif;">Available Departments</h1>
-  <table style="width:100%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Department Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Description</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for dept in departments %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.name }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.description or "No description" }}</td>
-        <td style="text-align: center; border:1px solid #ccc; padding:6px;">
-          <form action="{{ url_for('routes.view_doctors_by_patient', dept_id=dept.id) }}" method="get" style="display:inline;">
-            <button class="button button-primary" >View Doctors</button>
-          </form>
-          
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No departments found.</p
-  {% endif %}
-
-
-
-</div>
- 
-<div style="width:80%; margin:100px auto; border:1px solid #c42727ff; border-radius:8px; padding:20px; justify-content:center; align-items:center;">
-
-  {% if appointments %}
-  <h1 style="text-align: center; font-family: Arial, sans-serif;">Upcoming Appointments</h1>
-  <table style="width:80%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">Sr. No.</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Department</th>
-        <th style="border:1px solid #ccc; padding:6px;">Date</th>
-        <th style="border:1px solid #ccc; padding:6px;">Time</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for apt in appointments %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.doctor.username }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.doctor.department.name }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.appointment_date}}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ apt.appointment_time}}</td>
-        <td style="text-align: center; border:1px solid #ccc; padding:6px;">
-          <form action = "{{url_for('routes.cancel_apt_by_pt', appointment_id=apt.id)}}" method="POST" style="display:inline;">
-            <button class="button button-primary" >Cancel</button>
-          </form>
-          
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No Appointments found.</p>
-  {% endif %}
-
-
-
-</div>
-
 
 </body>
+
 </html>

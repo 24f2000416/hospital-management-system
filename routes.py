@@ -194,50 +194,50 @@ def role_required(*roles):
         return decorated
     return decorator
     
+from sqlalchemy import cast, String
 # admin dashboard route with search functionality
 @routes.route('/admin', methods=['GET'])
 @role_required("admin")
 def admin_dashboard():
+
     query = request.args.get('query', '').strip()
 
-    # impoartant models for passing to admin dashboard
     doctors = User.query.filter_by(role='doctor')
     patients = User.query.filter_by(role='patient')
     departments = Department.query
     appointments = Appointment.query
 
-    # If a search query exists, filter results
     if query:
-        
-        
-        # Search in doctors
+
         doctors = doctors.filter(
             (User.username.ilike(f'%{query}%')) |
             (User.email.ilike(f'%{query}%')) |
             (User.phone.ilike(f'%{query}%'))
         )
 
-
-        # Search in patients
         patients = patients.filter(
             (User.username.ilike(f'%{query}%')) |
             (User.email.ilike(f'%{query}%')) |
             (User.phone.ilike(f'%{query}%'))
         )
 
-        # Search in departments
         departments = departments.filter(
-            Department.name.ilike(f'%{query}%') |
-            Department.description.ilike(f'%{query}%')
+            (Department.name.ilike(f'%{query}%')) |
+            (Department.description.ilike(f'%{query}%'))
         )
 
-        # Search in appointments
         appointments = appointments.filter(
-            (Appointment.patient_id.ilike(f'%{query}%')) |
-            (Appointment.doctor_id.ilike(f'%{query}%')) |
-            (Appointment.appointment_date.ilike(f'%{query}%')) |
-            (Appointment.appointment_time.ilike(f'%{query}%'))
+            cast(Appointment.patient_id, String).ilike(f'%{query}%') |
+            cast(Appointment.doctor_id, String).ilike(f'%{query}%') |
+            cast(Appointment.appointment_date, String).ilike(f'%{query}%') |
+            cast(Appointment.appointment_time, String).ilike(f'%{query}%')
         )
+
+    appointments = appointments.order_by(
+        Appointment.appointment_date.desc(),
+        Appointment.appointment_time.desc(),
+        Appointment.id.desc()
+    )
 
     return render_template(
         'admin_dashboard.html',
@@ -1142,80 +1142,77 @@ def doctor_availability():
 
 
 # route for marking appointment as complete by doctor
-@routes.route('/doctor_dashboard/mark_as_complete/<int:appointment_id>',methods=['POST'])
-@role_required("doctor")
-def mark_as_complete_by_dr(appointment_id):
 
-    doctor_id = session["user_id"]
-
-    appointment = Appointment.query.filter_by(
-    id=appointment_id,
-    doctor_id=doctor_id,
-    status='scheduled').first_or_404()
-
-    appointment.status = 'completed'
-
-    slot = DoctorAvailability.query.filter_by(
-        doctor_id=doctor_id,
-        date=appointment.appointment_date.date()
-    ).first()
-
-    if slot:
-        if appointment.appointment_time == time(9, 0, 0):
-            slot.morning = True
-        else:
-            slot.evening = True
-
-    try:
-        db.session.commit()
-        flash('Appointment completed', 'success')
-    except Exception:
-        db.session.rollback()
-        flash('Error marking appointment complete.', 'danger')
-
-    return redirect(url_for('routes.doctor_dashboard'))
 
 
 # route for adding treatment record by doctor
-@routes.route('/doctor_dashboard/add_treatment/<int:appointment_id>',methods=["GET", "POST"])
+@routes.route(
+    '/doctor_dashboard/add_treatment/<int:appointment_id>',
+    methods=["GET", "POST"]
+)
 @role_required("doctor")
 def add_treatment(appointment_id):
 
     doctor_id = session["user_id"]
+
     appointment = Appointment.query.filter_by(
         id=appointment_id,
-        doctor_id=doctor_id
+        doctor_id=doctor_id,
+        status="scheduled"
     ).first_or_404()
+
     patient_id = appointment.patient_id
 
-    # Count previous treatments for this patient by this doctor
     previous_visits = (
         Treatment.query
-        .join(Appointment, Treatment.appointment_id == Appointment.id)
+        .join(
+            Appointment,
+            Treatment.appointment_id == Appointment.id
+        )
         .filter(Appointment.patient_id == patient_id)
         .filter(Appointment.doctor_id == doctor_id)
         .count()
     )
+
     next_visit_number = previous_visits + 1
-    
+
     if request.method == "POST":
+
         treatment = Treatment(
-            patient_id=appointment.patient_id,             # Auto from appointment
-            visit_date=datetime.utcnow(),                  # Auto
-            visit_number = next_visit_number,
+            patient_id=appointment.patient_id,
+            visit_date=datetime.utcnow(),
+            visit_number=next_visit_number,
             visit_type=request.form.get("visit_type"),
-            appointment_id=appointment.id,                 # Same appointment
+            appointment_id=appointment.id,
             prescription=request.form.get("prescription"),
             diagnosis_text=request.form.get("diagnosis_text"),
             medicines=request.form.get("medicines")
         )
 
         try:
+
             db.session.add(treatment)
+
+            # Complete appointment automatically
+            appointment.status = "completed"
+
+            # Make the slot available again
+            doctor_slot = DoctorAvailability.query.filter_by(
+                doctor_id=doctor_id,
+                date=appointment.appointment_date.date()
+            ).first()
+
+            if doctor_slot:
+
+                if appointment.appointment_time == time(9, 0, 0):
+                    doctor_slot.morning = True
+                else:
+                    doctor_slot.evening = True
+
             db.session.commit()
 
             flash(
-                "Treatment record added successfully!",
+                "Treatment added and appointment completed successfully.",
                 "success"
             )
 
@@ -1223,19 +1220,25 @@ def add_treatment(appointment_id):
                 url_for("routes.doctor_dashboard")
             )
 
-        except Exception:
+        except Exception as e:
             db.session.rollback()
 
             current_app.logger.exception(
                 "Error adding treatment"
             )
 
+            print("TREATMENT ERROR:", repr(e))
+
             flash(
-                "Unable to add treatment record.",
+                f"Unable to add treatment record: {e}",
                 "danger"
             )
 
-    return render_template("add_treatment.html", appointment=appointment,visit_number=next_visit_number)
+    return render_template(
+        "add_treatment.html",
+        appointment=appointment,
+        visit_number=next_visit_number
+    )
 
 
 # route for cancelling appointment by doctor
@@ -1298,11 +1301,33 @@ def cancel_apt_by_dr(appointment_id):
     return redirect(url_for('routes.doctor_dashboard'))
     
 # route for viewing patient history by doctor
-@routes.route('/doctor_dashboard/view_patient_history/<int:patient_id>')
+@routes.route('/doctor_dashboard/patient_history/<int:patient_id>')
 @role_required("doctor")
-def pt_history_by_doctor(patient_id):   
-    treatments = Treatment.query.join(Appointment).filter(Appointment.patient_id == patient_id , Appointment.doctor_id == session.get('user_id'),Appointment.status == 'completed').all()
-    return render_template('pt_history_by_doctor.html', treatments=treatments)
+def pt_history_by_doctor(patient_id):
+
+    doctor_id = session["user_id"]
+
+    patient = User.query.filter_by(
+        id=patient_id,
+        role="patient"
+    ).first_or_404()
+
+    treatments = (
+        Treatment.query
+        .join(Appointment, Treatment.appointment_id == Appointment.id)
+        .filter(
+            Appointment.patient_id == patient_id,
+            Appointment.doctor_id == doctor_id
+        )
+        .order_by(Treatment.visit_date.desc())
+        .all()
+    )
+
+    return render_template(
+        'pt_history_by_doctor.html',
+        treatments=treatments,
+        patient=patient
+    )
 
 
 

@@ -1,80 +1,498 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <title>Patient History</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient History | CarePlus</title>
+
     <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
 
-h2 {
-    text-align: center;
-    color: #333;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+        body {
+            margin: 0;
+            padding: 35px 25px;
 
-th, td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: left;
-}
+            font-family: Arial, sans-serif;
 
-th {
-    background: #eee;
-    font-weight: bold;
-}
+            background: #f4f5fa;
+            color: #111827;
+        }
 
-tr:nth-child(even) {
-    background: #f9f9f9;
-}
+        .page-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .page-label {
+            display: inline-block;
+
+            padding: 6px 11px;
+            margin-bottom: 9px;
+
+            background: #eef2ff;
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            margin: 0;
+
+            color: #111827;
+
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .back-btn {
+            position: absolute;
+
+            right: 0;
+            top: 0;
+
+            padding: 9px 16px;
+
+            background: #ffffff;
+            color: #4f46e5;
+
+            border: 1px solid #c7ccd8;
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            transition: 0.15s ease;
+        }
+
+        .back-btn:hover {
+            background: #eef2ff;
+            border-color: #4f46e5;
+        }
+
+        .patient-name {
+            margin-top: 14px;
+
+            padding: 12px 16px;
+
+            background: #eef2ff;
+
+            border-left: 4px solid #4f46e5;
+            border-radius: 7px;
+
+            color: #374151;
+
+            font-size: 16px;
+            font-weight: 700;
+
+            text-align: left;
+        }
+
+        .patient-name span {
+            color: #4f46e5;
+
+            font-size: 19px;
+            font-weight: 800;
+
+            margin-left: 5px;
+        }
+
+        .section-card {
+            width: 100%;
+
+            margin-bottom: 25px;
+
+            background: #ffffff;
+
+            border: 1px solid #c7ccd8;
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 22px rgba(24, 32, 51, 0.08);
+        }
+
+        .section-header {
+            padding: 16px 20px;
+
+            background: #f7f8fc;
+
+            border-bottom: 2px solid #c7ccd8;
+
+            color: #374151;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin: 0;
+
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 13px 15px;
+
+            border-right: 1px solid #dfe3ea;
+            border-bottom: 1px solid #dfe3ea;
+
+            text-align: left;
+
+            vertical-align: top;
+        }
+
+        th {
+            background: #ffffff;
+
+            color: #374151;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+
+            border-bottom: 2px solid #c7ccd8;
+
+            white-space: nowrap;
+        }
+
+        td {
+            color: #374151;
+
+            font-size: 11px;
+            font-weight: 500;
+
+            line-height: 1.5;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: #f7f8fc;
+        }
+
+        tbody tr:hover td {
+            background: #eef2ff;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-message {
+            padding: 30px;
+
+            text-align: center;
+
+            color: #667085;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .value-box {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .treatment-text {
+            max-width: 300px;
+
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .visit-badge {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            background: #eef2ff;
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+            border-radius: 5px;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 25px 12px;
+            }
+
+            .back-btn {
+                position: static;
+
+                display: inline-block;
+
+                margin-bottom: 15px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .patient-name {
+                font-size: 14px;
+            }
+
+            .patient-name span {
+                font-size: 17px;
+            }
+
+            table {
+                min-width: 750px;
+            }
+
+            th,
+            td {
+                padding: 11px 12px;
+            }
+
+        }
 
     </style>
-</head>
-<body>
-  <h2>Patient History</h2>
-  <form action="{{ url_for('routes.patient_dashboard') }}" method="get"
-        style="position:absolute; top:20px; right:20px;">
-      <button style="padding:5px 12px; background:#c0392b; color:white; border:none;
-                     border-radius:4px; cursor:pointer;">
-          Back
-      </button>
-    </form>
-  <h2>Welcome, {{ session.username }}!</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Department</th>
-        <th>Doctor Name</th>
-        <th>Visit Date</th>
-        <th>Visit Number</th>
-        <th>Visit Type</th>
-        <th>Prescription</th>
-        <th>Diagnosis</th>
-        <th>Medicines</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% if treatments%}
-      {% for entry in treatments %}
-      <tr>
-        <td>{{ entry.appointment.doctor.department.name }}</td>
-        <td>Dr .{{ entry.appointment.doctor.username }}</td>
-        <td>{{ entry.visit_date.strftime('%Y-%m-%d') }}</td>
-        <td>{{ entry.visit_number }}</td>
-        <td>{{ entry.visit_type }}</td>
-        <td>{{ entry.prescription or "N/A" }}</td>
-        <td>{{ entry.diagnosis_text or "N/A" }}</td>
-        <td>{{ entry.medicines or "N/A" }}</td>
 
-      </tr>
-      {% endfor %}
-      {% endif %}
-    </tbody>
-  </table>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <div class="page-header">
+
+            <div class="page-label">
+                CarePlus
+            </div>
+
+            <a
+                href="{{ url_for('routes.patient_dashboard') }}"
+                class="back-btn"
+            >
+                ← Back
+            </a>
+
+            <h2>
+                Patient History
+            </h2>
+
+            <div class="patient-name">
+                Patient:
+                <span>{{ patient.username }}</span>
+            </div>
+
+        </div>
+
+
+        <!-- Appointment History -->
+
+        <div class="section-card">
+
+            <div class="section-header">
+                Appointment History
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Appointment ID</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Doctor</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if appointments %}
+
+                            {% for apt in appointments %}
+
+                            <tr>
+
+                                <td>
+                                    <span class="visit-badge">
+                                        #{{ apt.id }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ apt.appointment_date }}
+                                </td>
+
+                                <td>
+                                    {{ apt.appointment_time }}
+                                </td>
+
+                                <td>
+                                    {% if apt.doctor %}
+                                        Dr. {{ apt.doctor.username }}
+                                    {% else %}
+                                        Not Available
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ apt.status }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="5" class="empty-message">
+                                    No appointment history available.
+                                </td>
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- Treatment History -->
+
+        <div class="section-card">
+
+            <div class="section-header">
+                Treatment History
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Visit No.</th>
+                            <th>Visit Date</th>
+                            <th>Visit Type</th>
+                            <th>Diagnosis</th>
+                            <th>Prescription</th>
+                            <th>Medicines</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if treatments %}
+
+                            {% for treatment in treatments %}
+
+                            <tr>
+
+                                <td>
+                                    <span class="visit-badge">
+                                        Visit {{ treatment.visit_number }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ treatment.visit_date }}
+                                </td>
+
+                                <td>
+                                    {{ treatment.visit_type if treatment.visit_type else "Not Provided" }}
+                                </td>
+
+                                <td>
+                                    <div class="treatment-text">
+                                        {{ treatment.diagnosis_text if treatment.diagnosis_text else "Not Provided" }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="treatment-text">
+                                        {{ treatment.prescription if treatment.prescription else "Not Provided" }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="treatment-text">
+                                        {{ treatment.medicines if treatment.medicines else "Not Provided" }}
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="6" class="empty-message">
+                                    No treatment history available.
+                                </td>
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

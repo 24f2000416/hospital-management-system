@@ -1,220 +1,2167 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | CarePlus</title>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+
+            --background: #f4f5fa;
+            --surface: #ffffff;
+            --surface-alt: #f7f8fc;
+
+            --text: #111827;
+            --text-secondary: #374151;
+            --text-muted: #667085;
+
+            --border: #c7ccd8;
+            --border-light: #dfe3ea;
+
+            --success: #047857;
+            --success-bg: #ecfdf5;
+
+            --warning: #b45309;
+            --warning-bg: #fffbeb;
+
+            --danger: #b91c1c;
+            --danger-bg: #fef2f2;
+
+            --shadow: 0 5px 22px rgba(24, 32, 51, 0.08);
+            --shadow-small: 0 2px 8px rgba(24, 32, 51, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --background: #111827;
+            --surface: #1b2333;
+            --surface-alt: #202a3a;
+
+            --text: #f8fafc;
+            --text-secondary: #d1d5db;
+            --text-muted: #a1a9b8;
+
+            --border: #465268;
+            --border-light: #3b4659;
+
+            --primary-light: #292653;
+
+            --success: #34d399;
+            --success-bg: #12352c;
+
+            --warning: #fbbf24;
+            --warning-bg: #382b16;
+
+            --danger: #f87171;
+            --danger-bg: #351d22;
+
+            --shadow: 0 5px 22px rgba(0, 0, 0, 0.25);
+            --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .top-bar {
+            width: 100%;
+            min-height: 68px;
+            padding: 12px 4%;
+
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            box-shadow: var(--shadow-small);
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--text);
+            text-decoration: none;
+
+            font-size: 18px;
+            font-weight: 800;
+
+            flex-shrink: 0;
+        }
+
+        .brand-mark {
+            width: 37px;
+            height: 37px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .top-actions {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            gap: 9px;
+
+            flex-shrink: 0;
+        }
+
+        .top-search {
+            width: 280px;
+            height: 37px;
+
+            display: flex;
+            align-items: stretch;
+
+            background: var(--surface);
+
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+
+            overflow: hidden;
+        }
+
+        .top-search input {
+            flex: 1;
+            min-width: 0;
+
+            padding: 0 12px;
+
+            background: transparent;
+            color: var(--text);
+
+            border: none;
+            outline: none;
+
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+        }
+
+        .top-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .top-search button {
+            width: 68px;
+
+            padding: 0;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border: none;
+
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .top-search button:hover {
+            background: var(--primary-dark);
+        }
+
+        .theme-btn {
+            width: 37px;
+            height: 37px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--surface);
+            color: var(--text);
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+        }
+
+        .theme-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .logout-btn {
+            height: 37px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 13px;
+
+            background: var(--danger-bg);
+            color: var(--danger);
+
+            border: 1px solid #fecaca;
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .page {
+            width: 94%;
+            max-width: 1450px;
+
+            margin: 35px auto 70px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 25px;
+        }
+
+        .page-label {
+            display: inline-block;
+
+            padding: 6px 10px;
+            margin-bottom: 9px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .page-header h1 {
+            margin: 0 0 7px;
+
+            color: var(--text);
+
+            font-size: 31px;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            margin: 0;
+
+            color: var(--text-secondary);
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 9px;
+        }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px 15px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .header-btn.primary {
+            background: var(--primary);
+            color: #ffffff;
+
+            border: 1px solid var(--primary);
+        }
+
+        .header-btn.secondary {
+            background: var(--surface);
+            color: var(--primary);
+
+            border: 1px solid var(--border);
+        }
+
+        .header-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .header-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .header-btn.secondary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .flash-container {
+            margin-bottom: 22px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 9px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 13px 16px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+
+            border-radius: 8px;
+
+            box-shadow: var(--shadow-small);
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .flash-message.success {
+            border-left-color: var(--success);
+        }
+
+        .flash-message.danger {
+            border-left-color: var(--danger);
+        }
+
+        .flash-message.warning {
+            border-left-color: var(--warning);
+        }
+
+        .flash-content {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .flash-icon {
+            width: 26px;
+            height: 26px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 6px;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .flash-message.success .flash-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .flash-message.danger .flash-icon {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .flash-message.warning .flash-icon {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .flash-close {
+            border: none;
+            background: transparent;
+
+            color: var(--text-muted);
+
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            padding: 20px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            box-shadow: var(--shadow);
+
+            display: flex;
+            align-items: center;
+
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 9px;
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .stat-label {
+            margin-bottom: 4px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            color: var(--text);
+
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .dashboard-section {
+            margin-bottom: 25px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            box-shadow: var(--shadow);
+
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 19px 22px;
+
+            background: var(--surface-alt);
+
+            border-bottom: 2px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 8px;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+
+            color: var(--text);
+
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .section-heading p {
+            margin: 3px 0 0;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+        }
+
+        .section-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .section-count {
+            padding: 5px 9px;
+
+            background: var(--surface);
+
+            color: var(--text-secondary);
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .small-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 8px 11px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .small-btn.primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .status-filter {
+            height: 32px;
+
+            padding: 0 10px;
+
+            background: var(--surface);
+            color: var(--text-secondary);
+
+            border: 1px solid var(--border);
+            border-radius: 6px;
+
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+
+            outline: none;
+
+            cursor: pointer;
+        }
+
+        .status-filter:hover,
+        .status-filter:focus {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .table-wrapper {
+            width: 100%;
+
+            max-height: 520px;
+
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: var(--surface-alt);
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 13px 17px;
+
+            background: var(--surface);
+
+            color: var(--text-secondary);
+
+            border-bottom: 1px solid var(--border);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+
+            text-align: left;
+
+            white-space: nowrap;
+
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        td {
+            height: 48px;
+
+            padding: 12px 17px;
+
+            color: var(--text-secondary);
+
+            border-bottom: 1px solid var(--border-light);
+
+            font-size: 11px;
+
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background: var(--surface-alt);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .id-badge {
+            display: inline-flex;
+
+            padding: 4px 7px;
+
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border-radius: 5px;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .name-cell {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .email-cell {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 5px 8px;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .status.active {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status.warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .status.cancelled {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .status.completed {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+
+            background: currentColor;
+
+            border-radius: 50%;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 6px 9px;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            text-decoration: none;
+
+            cursor: pointer;
+        }
+
+        .action-btn.edit {
+            background: var(--primary-light);
+            color: var(--primary);
+
+            border: 1px solid #d8dcf5;
+        }
+
+        .action-btn.view {
+            background: #eff6ff;
+            color: #1d4ed8;
+
+            border: 1px solid #dbeafe;
+        }
+
+        .action-btn.blacklist {
+            background: var(--warning-bg);
+            color: var(--warning);
+
+            border: 1px solid #fde7b0;
+        }
+
+        .action-btn.delete {
+            background: var(--danger-bg);
+            color: var(--danger);
+
+            border: 1px solid #fecaca;
+        }
+
+        .inline-form {
+            display: inline;
+
+            margin: 0;
+            padding: 0;
+        }
+
+        .scroll-hint {
+            padding: 9px 18px;
+
+            background: var(--surface-alt);
+
+            border-top: 1px solid var(--border);
+
+            color: var(--text-muted);
+
+            text-align: right;
+
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            width: 45px;
+            height: 45px;
+
+            margin: 0 auto 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--surface-alt);
+
+            border: 1px solid var(--border);
+
+            border-radius: 9px;
+
+            color: var(--text-muted);
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .empty-state strong {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+        }
+
+        .empty-state span {
+            font-size: 11px;
+        }
+
+        .search-result {
+            margin-bottom: 20px;
+
+            color: var(--text-secondary);
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .search-result span {
+            color: var(--primary);
+        }
+
+        .clear-search {
+            margin-left: 10px;
+
+            color: var(--danger);
+
+            text-decoration: none;
+
+            font-size: 11px;
+        }
+
+        @media (max-width: 1050px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .top-search {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 750px) {
+
+            .top-bar {
+                flex-wrap: wrap;
+            }
+
+            .top-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .top-search {
+                flex: 1;
+                width: auto;
+            }
+
+            .page {
+                width: 94%;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-btn {
+                flex: 1;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .section-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .table-wrapper {
+                max-height: 450px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .brand {
+                font-size: 16px;
+            }
+
+            .logout-btn {
+                padding: 0 10px;
+            }
+
+            .page-header h1 {
+                font-size: 25px;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .section-actions {
+                flex-wrap: wrap;
+            }
+
+            th,
+            td {
+                padding: 11px 12px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-btn {
+                text-align: center;
+            }
+        }
+    </style>
 </head>
+
+
 <body>
 
-  <h1 style="text-align: center; font-family: Arial, sans-serif;">Admin Dashboard</h1>
- <a href="{{ url_for('routes.logout') }}" 
-    style="position:absolute; top:20px; right:20px; padding:6px 12px; background:#dc3545; color:white; text-decoration:none; border-radius:4px;">
-    Logout</a>
+<header class="top-bar">
 
-  <div style="display:flex; justify-content:right; align-items:center; margin-top:30px;">
-    <form action="#" method="get" style="display:flex; align-items:center; gap:10px;">
-      <label for="search"><h2>Search:</h2></label>
-      <input type="text" id="search" name="query" 
-       value="{{ query or '' }}" 
-       placeholder="doctor, patient, appointment" style="padding:6px;">
-
-      <button type="submit" style="padding:6px 12px;">Search</button>
-    </form>
-  </div>
-
-
-
-
-<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-    <h3 style="margin:0;">Departments</h3>
-    <a href="{{ url_for('routes.add_department') }}" 
-       style="padding:6px 10px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">
-       + Add Department
+    <a
+        href="{{ url_for('routes.admin_dashboard') }}"
+        class="brand"
+    >
+        <span class="brand-mark">C</span>
+        CarePlus
     </a>
-  </div>
-
-  {% if departments %}
-  <table style="width:80%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Department Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Description</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for dept in departments %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.name }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ dept.description or "No description" }}</td>
-        <td>
-          <form action="{{ url_for('routes.view_doctors_by_admin', dept_id=dept.id) }}" method="get" style="display:inline;">
-            <button class="button button-primary">View Doctors</button>
-          </form>
-          <form action="{{ url_for('routes.delete_department', dept_id=dept.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('Delete this department?')">Delete</button>
-          </form>
-          <form action="{{ url_for('routes.blacklist_department', dept_id=dept.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('blacklist this department?')">blacklist</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No departments found.</p>
-  {% endif %}
-
-</div>
 
 
+    <div class="top-actions">
+
+        <form
+            method="GET"
+            action="{{ url_for('routes.admin_dashboard') }}"
+            class="top-search"
+        >
+
+            <input
+                type="text"
+                name="query"
+                value="{{ query or '' }}"
+                placeholder="Search records..."
+            >
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
 
 
-
-<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-    <h3 style="margin:0;">Doctors</h3>
-    <a href="{{ url_for('routes.add_doctor') }}" 
-       style="padding:6px 10px; background:#007bff; color:white; text-decoration:none; border-radius:4px;">
-       + Add Doctor
-    </a>
-  </div>
-
-  {% if doctors %}
-  <table style="width:80%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor Email</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor contact</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor Department ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor Department Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for doctor in doctors %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.username }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.email }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.phone }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.department_id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ doctor.department.name if doctor.department else "No department" }}</td>
-        <td>
-          <form action="{{ url_for('routes.edit_doctor', doctor_id=doctor.id) }}" method="get" style="display:inline;">
-            <button class="button button-primary">Edit</button>
-          </form>
-          <form action="{{ url_for('routes.delete_doctor', doctor_id=doctor.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('Delete this doctor?')">Delete</button>
-          </form>
-          <form action="{{ url_for('routes.blacklist_doctor', doctor_id=doctor.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('blacklist this doctor?')">blacklist</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No doctors found.</p>
-  {% endif %}
-  
-</div>
+        <button
+            type="button"
+            class="theme-btn"
+            id="themeToggle"
+            title="Toggle theme"
+        >
+            ☾
+        </button>
 
 
+        <a
+            href="{{ url_for('routes.logout') }}"
+            class="logout-btn"
+        >
+            Logout
+        </a>
 
-<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+    </div>
 
-
-  {% if  patients %}
-  <h3 style="margin:0;">patients</h3>
-  <table style="width:100%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">patient Name</th>
-        <th style="border:1px solid #ccc; padding:6px;">patient Email</th>
-        <th style="border:1px solid #ccc; padding:6px;">patient contact</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for patient in patients %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ patient.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ patient.username }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ patient.email }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ patient.phone }}</td>
-         <td>
-          <form action="{{ url_for('routes.edit_3264_patient', patient_id=patient.id) }}" method="get" style="display:inline;">
-            <button class="button button-primary">Edit</button>
-          </form>
-          <form action="{{ url_for('routes.delete_3264_patient', patient_id=patient.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('Delete this patient?')">Delete</button>
-          </form>
-          <form action="{{ url_for('routes.blacklist_3264_patient', patient_id=patient.id) }}" method="post" style="display:inline;">
-            <button class="button button-danger" onclick="return confirm('blacklist this patient?')">blacklist</button>
-          </form>
-        </td>
-
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No patients found.</p>
-  {% endif %}
-
-</div>
+</header>
 
 
+<main class="page">
 
 
+    <div class="page-header">
 
-<div style="width:90%; margin:40px auto; border:1px solid #ccc; border-radius:8px; padding:20px;">
+        <div>
 
+            <div class="page-label">
+                Administration
+            </div>
 
-  {% if  appointments %}
-  <h3 style="margin:0;">Appointments</h3>
-  <table style="width:100%; border-collapse:collapse;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:6px;">ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Patient ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Doctor ID</th>
-        <th style="border:1px solid #ccc; padding:6px;">Date</th>
-        <th style="border:1px solid #ccc; padding:6px;">Time</th>
-        <th style="border:1px solid #ccc; padding:6px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for appointment in appointments %}
-      <tr>
-        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.patient_id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.doctor_id }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.appointment_date }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">{{ appointment.appointment_time }}</td>
-        <td style="border:1px solid #ccc; padding:6px;">
-          <a href="{{ url_for('routes.patient_history_by_admin', patient_id=appointment.patient_id) }}">
-            <button type="button">View</button></a></td>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p style="text-align:center;">No patients found.</p>
-  {% endif %}
+            <h1>Admin Dashboard</h1>
 
-</div>
+            <p>
+                Manage departments, doctors, patients and appointments
+                from one place.
+            </p>
+
+        </div>
 
 
+        <div class="header-actions">
+
+            <a
+                href="{{ url_for('routes.add_department') }}"
+                class="header-btn secondary"
+            >
+                + Department
+            </a>
+
+            <a
+                href="{{ url_for('routes.add_doctor') }}"
+                class="header-btn primary"
+            >
+                + Add Doctor
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+
+                        <div class="flash-content">
+
+                            <div class="flash-icon">
+
+                                {% if category == "success" %}
+                                    ✓
+                                {% elif category == "danger" %}
+                                    !
+                                {% elif category == "warning" %}
+                                    !
+                                {% else %}
+                                    i
+                                {% endif %}
+
+                            </div>
+
+                            <span>{{ message }}</span>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="flash-close"
+                            onclick="this.parentElement.remove()"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <div class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                D
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Departments
+                </div>
+
+                <div class="stat-value">
+                    {{ departments|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                Dr
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Doctors
+                </div>
+
+                <div class="stat-value">
+                    {{ doctors|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                P
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Patients
+                </div>
+
+                <div class="stat-value">
+                    {{ patients|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                A
+            </div>
+
+            <div>
+
+                <div class="stat-label">
+                    Appointments
+                </div>
+
+                <div class="stat-value">
+                    {{ appointments|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if query %}
+
+        <div class="search-result">
+
+            Search results for:
+
+            <span>
+                "{{ query }}"
+            </span>
+
+            <a
+                href="{{ url_for('routes.admin_dashboard') }}"
+                class="clear-search"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if departments %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    D
+                </div>
+
+                <div>
+
+                    <h2>Departments</h2>
+
+                    <p>
+                        Manage hospital departments
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-actions">
+
+                <span class="section-count">
+                    {{ departments|length }} records
+                </span>
+
+                <a
+                    href="{{ url_for('routes.add_department') }}"
+                    class="small-btn primary"
+                >
+                    + Add Department
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for dept in departments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="id-badge">
+                                #{{ dept.id }}
+                            </span>
+                        </td>
+
+                        <td class="name-cell">
+                            {{ dept.name }}
+                        </td>
+
+                        <td>
+                            {{ dept.description or "No description" }}
+                        </td>
+
+                        <td>
+
+                            {% if dept.blacklisted %}
+
+                                <span class="status warning">
+                                    <span class="status-dot"></span>
+                                    Blacklisted
+                                </span>
+
+                            {% else %}
+
+                                <span class="status active">
+                                    <span class="status-dot"></span>
+                                    Active
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{{ url_for('routes.view_doctors_by_admin', dept_id=dept.id) }}"
+                                    class="action-btn view"
+                                >
+                                    View Doctors
+                                </a>
+
+
+                                {% if not dept.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.blacklist_department', dept_id=dept.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Blacklist this department?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn blacklist"
+                                    >
+                                        Blacklist
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.delete_department', dept_id=dept.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Delete this department?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn delete"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if departments|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view more departments ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    {% if doctors %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    Dr
+                </div>
+
+                <div>
+
+                    <h2>Doctors</h2>
+
+                    <p>
+                        Manage registered medical professionals
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-actions">
+
+                <span class="section-count">
+                    {{ doctors|length }} records
+                </span>
+
+                <a
+                    href="{{ url_for('routes.add_doctor') }}"
+                    class="small-btn primary"
+                >
+                    + Add Doctor
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Doctor</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for doctor in doctors %}
+
+                    <tr>
+
+                        <td>
+                            <span class="id-badge">
+                                #{{ doctor.id }}
+                            </span>
+                        </td>
+
+                        <td class="name-cell">
+                            {{ doctor.username }}
+                        </td>
+
+                        <td class="email-cell">
+                            {{ doctor.email }}
+                        </td>
+
+                        <td>
+                            {{ doctor.phone or "—" }}
+                        </td>
+
+                        <td>
+                            {{ doctor.department.name if doctor.department else "Not assigned" }}
+                        </td>
+
+                        <td>
+
+                            {% if doctor.blacklisted %}
+
+                                <span class="status warning">
+                                    <span class="status-dot"></span>
+                                    Blacklisted
+                                </span>
+
+                            {% else %}
+
+                                <span class="status active">
+                                    <span class="status-dot"></span>
+                                    Active
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{{ url_for('routes.edit_doctor', doctor_id=doctor.id) }}"
+                                    class="action-btn edit"
+                                >
+                                    Edit
+                                </a>
+
+
+                                {% if not doctor.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.blacklist_doctor', doctor_id=doctor.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Blacklist this doctor?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn blacklist"
+                                    >
+                                        Blacklist
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.delete_doctor', doctor_id=doctor.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Delete this doctor?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn delete"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if doctors|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view more doctors ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    {% if patients %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    P
+                </div>
+
+                <div>
+
+                    <h2>Patients</h2>
+
+                    <p>
+                        Manage registered patient accounts
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <span class="section-count">
+                {{ patients|length }} records
+            </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for patient in patients %}
+
+                    <tr>
+
+                        <td>
+                            <span class="id-badge">
+                                #{{ patient.id }}
+                            </span>
+                        </td>
+
+                        <td class="name-cell">
+                            {{ patient.username }}
+                        </td>
+
+                        <td class="email-cell">
+                            {{ patient.email }}
+                        </td>
+
+                        <td>
+                            {{ patient.phone or "—" }}
+                        </td>
+
+                        <td>
+
+                            {% if patient.blacklisted %}
+
+                                <span class="status warning">
+                                    <span class="status-dot"></span>
+                                    Blacklisted
+                                </span>
+
+                            {% else %}
+
+                                <span class="status active">
+                                    <span class="status-dot"></span>
+                                    Active
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                <a
+                                    href="{{ url_for('routes.edit_3264_patient', patient_id=patient.id) }}"
+                                    class="action-btn edit"
+                                >
+                                    Edit
+                                </a>
+
+
+                                <a
+                                    href="{{ url_for('routes.patient_history_by_admin', patient_id=patient.id) }}"
+                                    class="action-btn view"
+                                >
+                                    History
+                                </a>
+
+
+                                {% if not patient.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.blacklist_3264_patient', patient_id=patient.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Blacklist this patient?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn blacklist"
+                                    >
+                                        Blacklist
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.delete_3264_patient', patient_id=patient.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Delete this patient?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn delete"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if patients|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view more patients ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    {% if appointments %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    A
+                </div>
+
+                <div>
+
+                    <h2>Appointments</h2>
+
+                    <p>
+                        Most recent appointments and booking activity
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-actions">
+
+                <select
+                    id="appointmentStatusFilter"
+                    class="status-filter"
+                >
+                    <option value="all">All Status</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+
+
+                <span class="section-count">
+                    {{ appointments|length }} records
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient ID</th>
+                        <th>Doctor ID</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="appointmentTableBody">
+
+                    {% for appointment in appointments %}
+
+                    <tr>
+
+                        <td>
+                            <span class="id-badge">
+                                #{{ appointment.id }}
+                            </span>
+                        </td>
+
+                        <td>
+                            #{{ appointment.patient_id }}
+                        </td>
+
+                        <td>
+                            #{{ appointment.doctor_id }}
+                        </td>
+
+                        <td>
+                            {{ appointment.appointment_date }}
+                        </td>
+
+                        <td>
+                            {{ appointment.appointment_time }}
+                        </td>
+
+                        <td>
+
+                            {% if appointment.status == "scheduled" %}
+
+                                <span class="status active">
+                                    <span class="status-dot"></span>
+                                    Scheduled
+                                </span>
+
+                            {% elif appointment.status == "completed" %}
+
+                                <span class="status completed">
+                                    <span class="status-dot"></span>
+                                    Completed
+                                </span>
+
+                            {% elif appointment.status == "cancelled" %}
+
+                                <span class="status cancelled">
+                                    <span class="status-dot"></span>
+                                    Cancelled
+                                </span>
+
+                            {% else %}
+
+                                <span class="status warning">
+                                    <span class="status-dot"></span>
+                                    {{ appointment.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if appointments|length > 10 %}
+
+        <div class="scroll-hint">
+            Scroll to view older appointments ↓
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    {% if not departments and not doctors and not patients and not appointments %}
+
+    <div class="dashboard-section">
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                !
+            </div>
+
+            <strong>
+                No records found
+            </strong>
+
+            <span>
+
+                {% if query %}
+                    No records matched "{{ query }}".
+                {% else %}
+                    There are currently no records to display.
+                {% endif %}
+
+            </span>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+</main>
+
+
+<script>
+
+    const themeButton =
+        document.getElementById("themeToggle");
+
+    const root =
+        document.documentElement;
+
+    const savedTheme =
+        localStorage.getItem("careplus-theme");
+
+
+    if (savedTheme) {
+
+        root.setAttribute(
+            "data-theme",
+            savedTheme
+        );
+
+    }
+
+
+    function updateThemeIcon() {
+
+        const currentTheme =
+            root.getAttribute("data-theme");
+
+        themeButton.textContent =
+            currentTheme === "dark"
+                ? "☀"
+                : "☾";
+    }
+
+
+    updateThemeIcon();
+
+
+    themeButton.addEventListener(
+        "click",
+        function () {
+
+            const currentTheme =
+                root.getAttribute("data-theme");
+
+            const newTheme =
+                currentTheme === "dark"
+                    ? "light"
+                    : "dark";
+
+            root.setAttribute(
+                "data-theme",
+                newTheme
+            );
+
+            localStorage.setItem(
+                "careplus-theme",
+                newTheme
+            );
+
+            updateThemeIcon();
+
+        }
+    );
+
+
+    const appointmentFilter =
+        document.getElementById(
+            "appointmentStatusFilter"
+        );
+
+
+    const appointmentRows =
+        document.querySelectorAll(
+            "#appointmentTableBody tr"
+        );
+
+
+    if (appointmentFilter) {
+
+        appointmentFilter.addEventListener(
+            "change",
+            function () {
+
+                const selectedStatus =
+                    this.value;
+
+                appointmentRows.forEach(
+                    function (row) {
+
+                        const statusElement =
+                            row.querySelector(".status");
+
+                        if (!statusElement) {
+                            return;
+                        }
+
+                        const status =
+                            statusElement.textContent
+                                .trim()
+                                .toLowerCase();
+
+
+                        if (
+                            selectedStatus === "all" ||
+                            status === selectedStatus
+                        ) {
+
+                            row.style.display = "";
+
+                        } else {
+
+                            row.style.display = "none";
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+</script>
 
 </body>
+
 </html>
+```

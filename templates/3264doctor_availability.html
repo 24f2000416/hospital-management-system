@@ -1,186 +1,873 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Doctor Availability</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-/* Page font */
-body {
-    font-family: Arial, sans-serif;
-}
+```
+<title>Doctor Availability | CarePlus</title>
 
-/* Main table layout */
-table {
-    width: 80%;
-    margin: 30px auto;
-    border-collapse: collapse;
-}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #eef2ff;
 
-th, td {
-    padding: 14px;
-    text-align: center;
-}
+        --success: #059669;
+        --success-bg: #ecfdf5;
 
-/* Date display box */
-.date-box {
-    background: #e6f2ff;
-    padding: 10px 18px;
-    border: 1px solid #9eb3c7;
-    border-radius: 6px;
-    display: inline-block;
-    min-width: 140px;
-}
+        --background: #f4f5fa;
+        --surface: #ffffff;
+        --surface-alt: #f8f9fc;
 
-/* Default look for each time option */
-.time-slot {
-    display: inline-block;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-size: 15px;
-    min-width: 160px;
-    cursor: pointer;
-    user-select: none;
+        --text: #182033;
+        --text-secondary: #4b5563;
+        --text-muted: #7b8496;
 
-    background: #ffecec;
-    color: red;
-    border: 2px solid red;
-}
+        --border: #dde1eb;
 
-/* When the hidden checkbox is active */
-input[type="checkbox"]:checked + .time-slot {
-    background: #e9ffe9;
-    color: green;
-    border-color: green;
-}
+        --shadow: 0 4px 18px rgba(24, 32, 51, 0.07);
+        --shadow-small: 0 2px 8px rgba(24, 32, 51, 0.06);
+    }
 
-/* Hide the checkbox — only show the styled label */
-input[type="checkbox"] {
-    display: none;
-}
+    [data-theme="dark"] {
+        --background: #111827;
+        --surface: #1b2333;
+        --surface-alt: #202a3a;
 
-/* Save button styling */
-.save-btn {
-    background: #ffffff;
-    color: green;
-    border: 2px solid green;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
+        --text: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
 
-/* Align save button container */
-.save-container {
-    width: 80%;
-    margin: 20px auto 0 auto;
-    text-align: right;
-}
+        --border: #334155;
 
-    </style>
+        --primary-light: #252554;
+
+        --success-bg: #12352c;
+
+        --shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+        --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+    }
+
+    .top-bar {
+        width: 100%;
+        padding: 18px 4%;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        box-shadow: var(--shadow-small);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        color: var(--text);
+        text-decoration: none;
+
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .brand-mark {
+        width: 34px;
+        height: 34px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: var(--primary);
+        color: white;
+
+        border-radius: 8px;
+
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 9px 15px;
+
+        background: var(--surface);
+        color: var(--primary);
+
+        border: 1px solid var(--border);
+        border-radius: 7px;
+
+        text-decoration: none;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+    }
+
+    .page {
+        width: 92%;
+        max-width: 1200px;
+        margin: 45px auto 70px;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-label {
+        display: inline-block;
+
+        padding: 6px 10px;
+        margin-bottom: 10px;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border: 1px solid var(--border);
+        border-radius: 6px;
+
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+
+        color: var(--text);
+
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .page-header p {
+        margin: 0;
+
+        color: var(--text-secondary);
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .flash-container {
+        width: 92%;
+        max-width: 1200px;
+        margin: 18px auto 0;
+
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .flash-message {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        padding: 13px 16px;
+
+        background: var(--surface);
+        color: var(--text);
+
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+
+        border-radius: 7px;
+
+        box-shadow: var(--shadow-small);
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .flash-message.success {
+        border-left-color: var(--success);
+    }
+
+    .flash-message.danger {
+        border-left-color: #dc2626;
+    }
+
+    .flash-message.warning {
+        border-left-color: #d97706;
+    }
+
+    .flash-message.info {
+        border-left-color: var(--primary);
+    }
+
+    .flash-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .flash-icon {
+        width: 25px;
+        height: 25px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border-radius: 6px;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .flash-message.success .flash-icon {
+        background: var(--success-bg);
+        color: var(--success);
+    }
+
+    .flash-message.danger .flash-icon {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .flash-message.warning .flash-icon {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .flash-close {
+        border: none;
+        background: transparent;
+
+        color: var(--text-muted);
+
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .availability-card {
+        background: var(--surface);
+
+        border: 1px solid var(--border);
+        border-radius: 12px;
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 20px 24px;
+
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .card-icon {
+        width: 38px;
+        height: 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border-radius: 8px;
+
+        font-weight: 800;
+    }
+
+    .card-title h2 {
+        margin: 0;
+
+        color: var(--text);
+
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .card-title p {
+        margin: 3px 0 0;
+
+        color: var(--text-muted);
+
+        font-size: 11px;
+    }
+
+    .legend {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        color: var(--text-muted);
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .legend-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+    }
+
+    .legend-dot.available {
+        background: var(--success);
+    }
+
+    .legend-dot.unavailable {
+        background: #dc2626;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        padding: 14px 20px;
+
+        background: var(--surface-alt);
+
+        color: var(--text-muted);
+
+        border-bottom: 1px solid var(--border);
+
+        font-size: 10px;
+        font-weight: 800;
+
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+
+        text-align: left;
+    }
+
+    th:not(:first-child) {
+        text-align: center;
+    }
+
+    td {
+        padding: 18px 20px;
+
+        border-bottom: 1px solid var(--border);
+
+        vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    tbody tr {
+        transition: 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background: var(--surface-alt);
+    }
+
+    .date-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 130px;
+
+        padding: 9px 14px;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border: 1px solid var(--border);
+        border-radius: 7px;
+
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    td:nth-child(2),
+    td:nth-child(3) {
+        text-align: center;
+    }
+
+    label {
+        display: inline-block;
+    }
+
+    input[type="checkbox"] {
+        position: absolute;
+
+        width: 1px;
+        height: 1px;
+
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .time-slot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 180px;
+
+        padding: 11px 18px;
+
+        background: #fef2f2;
+        color: #dc2626;
+
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        cursor: pointer;
+        user-select: none;
+
+        transition: 0.2s ease;
+    }
+
+    .time-slot:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-small);
+    }
+
+    input[type="checkbox"]:checked + .time-slot {
+        background: var(--success-bg);
+        color: var(--success);
+        border-color: var(--success);
+    }
+
+    input[type="checkbox"]:checked + .time-slot::before {
+        content: "✓";
+        margin-right: 7px;
+        font-weight: 900;
+    }
+
+    input[type="checkbox"]:disabled + .time-slot {
+        opacity: 0.5;
+        cursor: not-allowed;
+
+        background: var(--surface-alt);
+        color: var(--text-muted);
+
+        border-color: var(--border);
+
+        transform: none;
+        box-shadow: none;
+    }
+
+    .save-container {
+        padding: 18px 24px;
+
+        background: var(--surface-alt);
+
+        border-top: 1px solid var(--border);
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .save-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        padding: 10px 20px;
+
+        background: var(--primary);
+        color: #ffffff;
+
+        border: 1px solid var(--primary);
+        border-radius: 7px;
+
+        font-size: 12px;
+        font-weight: 800;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+    .save-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-small);
+    }
+
+    @media (max-width: 800px) {
+        .page {
+            width: 94%;
+            margin-top: 30px;
+        }
+
+        .card-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .legend {
+            width: 100%;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+        }
+
+        .time-slot {
+            min-width: 155px;
+            padding: 10px 12px;
+            font-size: 11px;
+        }
+
+        .date-box {
+            min-width: 110px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .top-bar {
+            padding: 14px 4%;
+        }
+
+        .brand {
+            font-size: 16px;
+        }
+
+        .back-btn {
+            padding: 8px 11px;
+            font-size: 11px;
+        }
+
+        .page {
+            width: 95%;
+        }
+
+        .page-header h1 {
+            font-size: 23px;
+        }
+
+        .card-header {
+            padding: 17px;
+        }
+
+        th {
+            font-size: 9px;
+        }
+
+        td {
+            padding: 13px 9px;
+        }
+
+        .time-slot {
+            min-width: 135px;
+            padding: 9px 8px;
+            font-size: 10px;
+        }
+
+        .date-box {
+            min-width: 95px;
+            padding: 8px 7px;
+            font-size: 10px;
+        }
+
+        .save-container {
+            padding: 16px;
+        }
+
+        .save-btn {
+            width: 100%;
+        }
+    }
+</style>
+```
 
 </head>
+
 <body>
 
+```
+<div class="top-bar">
+
+    <a
+        href="{{ url_for('routes.doctor_dashboard') }}"
+        class="brand"
+    >
+        <span class="brand-mark">C</span>
+        CarePlus
+    </a>
+
+    <a
+        href="{{ url_for('routes.doctor_dashboard') }}"
+        class="back-btn"
+    >
+        ← Back to Dashboard
+    </a>
+
+</div>
+
 {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div style="width:80%; margin:auto;">
-      {% for category, message in messages %}
-        <div style="padding:10px; background:#f8d7da; border-left:5px solid red;
-                    margin-bottom:10px; border-radius:5px;">
-          {{ message }}
+    {% if messages %}
+
+        <div class="flash-container">
+
+            {% for category, message in messages %}
+
+                <div class="flash-message {{ category }}">
+
+                    <div class="flash-content">
+
+                        <div class="flash-icon">
+                            {% if category == "success" %}
+                                ✓
+                            {% elif category == "danger" %}
+                                !
+                            {% elif category == "warning" %}
+                                !
+                            {% else %}
+                                i
+                            {% endif %}
+                        </div>
+
+                        <span>{{ message }}</span>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="flash-close"
+                        onclick="this.parentElement.remove()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
         </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+
+    {% endif %}
 {% endwith %}
 
+<main class="page">
 
-<form action="{{ url_for('routes.doctor_dashboard') }}" method="get"
-      style="position:absolute; top:20px; right:20px;">
-    <button style="padding:5px 12px; background:#c0392b; color:white; border:none;
-                   border-radius:4px; cursor:pointer;">
-        Back
-    </button>
-</form>
+    <div class="page-header">
 
-<h2 style="text-align:center; margin-top:40px;">Doctor's Availability</h2>
+        <div class="page-label">
+            Doctor Portal
+        </div>
 
-<form method="POST" action="{{ url_for('routes.doctor_availability') }}">
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Morning Slot</th>
-            <th>Evening Slot</th>
-        </tr>
+        <h1>Manage Your Availability</h1>
 
-        {% for day in days_availability %}
-        <tr>
+        <p>
+            Select the morning and evening slots when you are available
+            for patient appointments.
+        </p>
 
-            <!-- Date -->
-            <td>
-                <div class="date-box">
-                    {{ day.date.strftime("%d/%m/%Y") }}
+    </div>
+
+    <div class="availability-card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="card-icon">
+                    ✓
                 </div>
-            </td>
 
-            <!-- Morning Slot -->
-            <td>
-                <label>
-    <input type="checkbox"
-           name="morning_{{ day.date.isoformat() }}"
-           {% if day.morning %}checked{% endif %}
-           {% if day.morning_booked %}disabled data-booked="true"{% endif %} />
+                <div>
+                    <h2>Appointment Availability</h2>
 
-    <div class="time-slot"
-         {% if day.morning_booked %}
-             title="This slot is already booked. You cannot change it."
-             style="opacity:0.5; cursor:not-allowed;"
-         {% endif %}>
-        08:00 - 12:00 am
+                    <p>
+                        Configure your consultation timings.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="legend">
+
+                <div class="legend-item">
+                    <span class="legend-dot available"></span>
+                    Available
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot unavailable"></span>
+                    Unavailable
+                </div>
+
+            </div>
+
+        </div>
+
+        <form method="POST">
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Morning</th>
+                            <th>Evening</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for day in days_availability %}
+
+                        <tr>
+
+                            <td>
+                                <div class="date-box">
+                                    {{ day.date.strftime("%d/%m/%Y") }}
+                                </div>
+                            </td>
+
+                            <td>
+
+                                <label>
+
+                                    <input
+                                        type="checkbox"
+                                        name="morning_{{ day.date.isoformat() }}"
+                                        {% if day.morning %}checked{% endif %}
+                                        {% if day.morning_booked %}
+                                            disabled
+                                            data-booked="true"
+                                        {% endif %}
+                                    />
+
+                                    <div
+                                        class="time-slot"
+                                        {% if day.morning_booked %}
+                                            title="This slot is already booked. You cannot change it."
+                                        {% endif %}
+                                    >
+                                        08:00 - 12:00 am
+                                    </div>
+
+                                </label>
+
+                            </td>
+
+                            <td>
+
+                                <label>
+
+                                    <input
+                                        type="checkbox"
+                                        name="evening_{{ day.date.isoformat() }}"
+                                        {% if day.evening %}checked{% endif %}
+                                        {% if day.evening_booked %}
+                                            disabled
+                                            data-booked="true"
+                                        {% endif %}
+                                    />
+
+                                    <div
+                                        class="time-slot"
+                                        {% if day.evening_booked %}
+                                            title="This slot is already booked. You cannot change it."
+                                        {% endif %}
+                                    >
+                                        04:00 - 09:00 pm
+                                    </div>
+
+                                </label>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="save-container">
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    ✓ Save
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
-</label>
 
-            </td>
-
-            <!-- Evening Slot -->
-            <td>
-                <label>
-    <input type="checkbox"
-           name="evening_{{ day.date.isoformat() }}"
-           {% if day.evening %}checked{% endif %}
-           {% if day.evening_booked %}disabled data-booked="true"{% endif %} />
-
-    <div class="time-slot"
-         {% if day.evening_booked %}
-             title="This slot is already booked. You cannot change it."
-             style="opacity:0.5; cursor:not-allowed;"
-         {% endif %}>
-        04:00 - 09:00 pm
-    </div>
-</label>
-
-            </td>
-
-        </tr>
-        {% endfor %}
-    </table>
-
-    <div class="save-container">
-        <button class="save-btn">Save</button>
-    </div>
-</form>
+</main>
+```
 
 </body>
-
-
-<script>
-document.querySelectorAll("input[data-booked='true']").forEach(function (el) {
-    el.addEventListener("click", function (e) {
-        e.preventDefault();
-        alert("This slot is already booked. You cannot change it.");
-    });
-});
-</script>
-
 </html>

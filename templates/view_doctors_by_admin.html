@@ -1,68 +1,682 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
 
-    <!-- CSS Reset (optional) -->
+    <title>{{ department.name }} | CarePlus</title>
+
     <style>
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        body {
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f5fa;
+
+            color: #111827;
+
+            padding: 35px 25px;
+        }
+
+        /* Main container */
+
+        .page-container {
+            width: 100%;
+
+            max-width: 1150px;
+
+            margin: 0 auto;
+        }
+
+        /* Top bar */
+
+        .top-bar {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .brand-area {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .careplus-badge {
+            display: inline-block;
+
+            padding: 7px 12px;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+
+            border-radius: 7px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.8px;
+
+            text-transform: uppercase;
+        }
+
+        .page-label {
+            color: #667085;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+        /* Back button */
+
+        .back-form {
+            margin: 0;
+        }
+
+        .back-btn {
+            padding: 9px 17px;
+
+            background: #ffffff;
+
+            color: #4f46e5;
+
+            border: 1px solid #c7ccd8;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #eef2ff;
+
+            border-color: #4f46e5;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 4px 10px rgba(79, 70, 229, 0.12);
+        }
+
+        /* Department header */
+
+        .department-card {
+            background: #ffffff;
+
+            border: 1px solid #c7ccd8;
+
+            border-radius: 12px;
+
+            padding: 28px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 22px rgba(24, 32, 51, 0.08);
+
+            text-align: center;
+        }
+
+        .department-icon {
+            width: 55px;
+
+            height: 55px;
+
+            margin: 0 auto 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+
+            border-radius: 50%;
+
+            font-size: 22px;
+
+            font-weight: 800;
+        }
+
+        .department-card h1 {
+            color: #111827;
+
+            font-size: 28px;
+
+            font-weight: 800;
+
+            margin-bottom: 14px;
+        }
+
+        .description-label {
+            display: inline-block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.6px;
+        }
+
+        .description {
+            max-width: 750px;
+
+            margin: 0 auto;
+
+            color: #667085;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+        /* Doctors heading */
+
+        .doctors-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 14px;
+        }
+
+        .doctors-header h2 {
+            color: #111827;
+
+            font-size: 21px;
+
+            font-weight: 800;
+        }
+
+        .doctors-label {
+            padding: 5px 9px;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+        /* Table card */
+
+        .table-card {
+            background: #ffffff;
+
+            border: 1px solid #c7ccd8;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 5px 22px rgba(24, 32, 51, 0.08);
+        }
+
+        .table-title {
+            padding: 15px 20px;
+
+            background: #f7f8fc;
+
+            border-bottom: 2px solid #c7ccd8;
+
+            color: #374151;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+        .table-wrapper {
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 14px 15px;
+
+            border-right: 1px solid #dfe3ea;
+
+            border-bottom: 1px solid #dfe3ea;
+
+            text-align: left;
+        }
+
+        th {
+            background: #ffffff;
+
+            color: #374151;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            border-bottom: 2px solid #c7ccd8;
+
+            white-space: nowrap;
+        }
+
+        td {
+            color: #374151;
+
+            font-size: 11px;
+
+            font-weight: 500;
+        }
+
+        /* Alternate rows */
+
+        tr:nth-child(even) td {
+            background: #f7f8fc;
+        }
+
+        /* Hover */
+
+        tbody tr:hover td {
+            background: #eef2ff;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Doctor ID */
+
+        .doctor-id {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 34px;
+
+            padding: 5px 8px;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+
+            border-radius: 5px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        /* Doctor name */
+
+        .doctor-name {
+            color: #111827;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+        /* Email */
+
+        .doctor-email {
+            color: #4f46e5;
+
+            font-weight: 600;
+        }
+
+        /* Experience */
+
+        .experience {
+            color: #374151;
+
+            font-weight: 700;
+        }
+
+        /* Phone */
+
+        .doctor-phone {
+            color: #374151;
+
+            font-weight: 600;
+        }
+
+        /* No doctors */
+
+        .no-doctors {
+            padding: 25px;
+
+            background: #ffffff;
+
+            color: #667085;
+
+            border: 1px solid #dfe3ea;
+
+            border-radius: 9px;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 4px 15px rgba(24, 32, 51, 0.05);
+        }
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 25px 12px;
+            }
+
+            .top-bar {
+                align-items: flex-start;
+            }
+
+            .department-card {
+                padding: 22px 17px;
+            }
+
+            .department-card h1 {
+                font-size: 23px;
+            }
+
+            .doctors-header h2 {
+                font-size: 18px;
+            }
+
+            table {
+                min-width: 750px;
+            }
+
+            th,
+            td {
+                padding: 11px 12px;
+            }
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
 
 
+<div class="page-container">
 
-    
 
-    <form action="{{ url_for('routes.admin_dashboard') }}" method="get" style="position:absolute; top:20px; right:20px;">
-        <button type="submit" 
-        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-        back</button>
-    </form>
+    <!-- TOP BAR -->
 
-    
-    <div style="margin-bottom: 20px;" justify-content="center" align="center"><h1>{{department.name}}</h1>
-        <strong style="display:inline-block;">Department Description</strong>
-        <p>{{ department.description or "No description available." }}</p>
-        <h2>Doctors in this Department</h2>
-    {% if doctors%}
+    <div class="top-bar">
 
-    <table style="width:80%; border-collapse:collapse;">
-        <thead>
-            <tr>
+        <div class="brand-area">
 
-                <th style="border:1px solid #ccc; padding:6px;">Doctor ID</th>
-                <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
-                <th style="border:1px solid #ccc; padding:6px;">Doctor Email</th>
-                <th style="border:1px solid #ccc; padding:6px;">Doctor Experience</th>
-                <th style="border:1px solid #ccc; padding:6px;">Doctor Contact Number</th>
+            <div class="careplus-badge">
+                CarePlus
+            </div>
 
-            </tr>
-        </thead>
-        <tbody>
-            {% for doctor in doctors %}
-            <tr>
-                <td style="border:1px solid #111111ff; padding:6px;">{{ doctor.id }}</td>
-                <td style="border:1px solid #070707ff; padding:6px;">{{ doctor.username }}</td>
-                <td style="border:1px solid #070707ff; padding:6px;">{{ doctor.email }}</td>
-                <td style="border:1px solid #0d0d0dff; padding:6px;">{{ doctor.drexperience }}</td>
-                <td style="border:1px solid #090909ff; padding:6px;">{{ doctor.phone }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
-    
-    {% else %}
-        <p>No doctors found in this department.</p>
-    {% endif %}
+            <div class="page-label">
+                Department Management
+            </div>
 
-    <!-- Your content goes here -->
+        </div>
+
+
+        <!-- BACK BUTTON -->
+
+        <form
+            action="{{ url_for('routes.admin_dashboard') }}"
+            method="get"
+            class="back-form"
+        >
+
+            <button
+                type="submit"
+                class="back-btn"
+            >
+                ← Back
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- DEPARTMENT INFORMATION -->
+
+    <div class="department-card">
+
+        <div class="department-icon">
+            +
+        </div>
+
+        <h1>
+            {{department.name}}
+        </h1>
+
+        <div class="description-label">
+            Department Description
+        </div>
+
+        <p class="description">
+            {{ department.description or "No description available." }}
+        </p>
+
+    </div>
+
+
+    <!-- DOCTORS HEADER -->
+
+    <div class="doctors-header">
+
+        <h2>
+            Doctors in this Department
+        </h2>
+
+        <div class="doctors-label">
+            Doctors Directory
+        </div>
+
+    </div>
+
+
+{% if doctors%}
+
+
+    <!-- DOCTORS TABLE -->
+
+    <div class="table-card">
+
+        <div class="table-title">
+            Department Doctors
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Doctor ID
+                        </th>
+
+                        <th>
+                            Doctor Name
+                        </th>
+
+                        <th>
+                            Doctor Email
+                        </th>
+
+                        <th>
+                            Doctor Experience
+                        </th>
+
+                        <th>
+                            Doctor Contact Number
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for doctor in doctors %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="doctor-id">
+                                {{ doctor.id }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="doctor-name">
+                                {{ doctor.username }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="doctor-email">
+                                {{ doctor.email }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="experience">
+                                {{ doctor.drexperience }} years
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="doctor-phone">
+                                {{ doctor.phone }}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+{% else %}
+
+
+    <div class="no-doctors">
+        No doctors found in this department.
+    </div>
+
+
+{% endif %}
+
+
+<!-- Your content goes here -->
+
+
+</div>
+
 
 </body>
+
 </html>

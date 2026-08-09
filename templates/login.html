@@ -1,47 +1,481 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero">
-  <div class="container" 
-       style="background:white; color:black; padding:30px; border-radius:10px; 
-              max-width:400px; margin:80px auto; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
 
-    {% if mess %}
-      <div style="background-color:#f8d7da; color:#721c24; padding:10px; 
-                  border-radius:5px; margin-bottom:15px; max-width:400px; 
-                  margin:auto; text-align:center;">
-        {{ mess }}
-      </div>
-    {% endif %}
+<style>
 
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 style="margin:0;">Login</h2>
-      <a href="{{ url_for('routes.index') }}" 
-         style="color:#007bff; text-decoration:none;">&larr; Back</a>
+    * {
+        box-sizing: border-box;
+    }
+
+    .login-page {
+        min-height: 80vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 35px 20px;
+
+        font-family: Arial, sans-serif;
+
+        background:
+            radial-gradient(circle at top left, rgba(79, 70, 229, 0.12), transparent 35%),
+            radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.10), transparent 35%);
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 410px;
+
+        background: #ffffff;
+
+        padding: 32px;
+
+        border: 1px solid #dfe3ea;
+        border-radius: 16px;
+
+        box-shadow:
+            0 10px 30px rgba(24, 32, 51, 0.10),
+            0 2px 8px rgba(24, 32, 51, 0.05);
+
+        animation: cardAppear 0.5s ease-out;
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-4px);
+
+        box-shadow:
+            0 18px 40px rgba(24, 32, 51, 0.14),
+            0 4px 12px rgba(24, 32, 51, 0.06);
+    }
+
+    @keyframes cardAppear {
+
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+    .login-header {
+        text-align: center;
+
+        margin-bottom: 25px;
+    }
+
+    .brand-badge {
+        display: inline-block;
+
+        padding: 7px 12px;
+
+        margin-bottom: 12px;
+
+        background: #eef2ff;
+        color: #4f46e5;
+
+        border: 1px solid #d8dcf5;
+
+        border-radius: 7px;
+
+        font-size: 10px;
+        font-weight: 800;
+
+        letter-spacing: 1px;
+
+        text-transform: uppercase;
+    }
+
+    .login-title-row {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 6px;
+    }
+
+    .login-title {
+        margin: 0;
+
+        color: #111827;
+
+        font-size: 25px;
+
+        font-weight: 800;
+    }
+
+    .back-link {
+        color: #4f46e5;
+
+        text-decoration: none;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        padding: 6px 9px;
+
+        border-radius: 6px;
+
+        transition: 0.2s ease;
+    }
+
+    .back-link:hover {
+        background: #eef2ff;
+
+        color: #3730a3;
+
+        transform: translateX(-2px);
+    }
+
+    .login-subtitle {
+        margin: 7px 0 0;
+
+        color: #667085;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+    .divider {
+        height: 1px;
+
+        background: #e5e7eb;
+
+        margin: 22px 0;
+    }
+
+    .message {
+        background: #fef2f2;
+
+        color: #b91c1c;
+
+        padding: 11px 13px;
+
+        border: 1px solid #fecaca;
+
+        border-left: 4px solid #b91c1c;
+
+        border-radius: 7px;
+
+        margin-bottom: 18px;
+
+        text-align: center;
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        animation: messageAppear 0.3s ease-out;
+    }
+
+    @keyframes messageAppear {
+
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+    .form-group {
+        margin-bottom: 17px;
+    }
+
+    .form-label {
+        display: block;
+
+        margin-bottom: 7px;
+
+        color: #374151;
+
+        font-size: 11px;
+
+        font-weight: 800;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+
+        padding: 12px 13px;
+
+        background: #ffffff;
+
+        color: #111827;
+
+        border: 1px solid #c7ccd8;
+
+        border-radius: 8px;
+
+        font-family: Arial, sans-serif;
+
+        font-size: 12px;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .form-input:hover {
+        border-color: #9ca3af;
+    }
+
+    .form-input:focus {
+        border-color: #4f46e5;
+
+        box-shadow:
+            0 0 0 3px rgba(79, 70, 229, 0.10);
+
+        transform: translateY(-1px);
+    }
+
+    .login-button {
+        width: 100%;
+
+        padding: 12px 15px;
+
+        margin-top: 5px;
+
+        background: #4f46e5;
+
+        color: #ffffff;
+
+        border: 1px solid #4f46e5;
+
+        border-radius: 8px;
+
+        font-family: Arial, sans-serif;
+
+        font-size: 12px;
+
+        font-weight: 800;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .login-button:hover {
+        background: #3730a3;
+
+        border-color: #3730a3;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 7px 15px rgba(79, 70, 229, 0.22);
+    }
+
+    .login-button:active {
+        transform: translateY(0);
+
+        box-shadow: none;
+    }
+
+    .register-section {
+        text-align: center;
+
+        margin-top: 22px;
+
+        padding-top: 18px;
+
+        border-top: 1px solid #e5e7eb;
+
+        color: #667085;
+
+        font-size: 11px;
+    }
+
+    .register-link {
+        color: #4f46e5;
+
+        text-decoration: none;
+
+        font-weight: 800;
+
+        margin-left: 4px;
+
+        transition: 0.2s ease;
+    }
+
+    .register-link:hover {
+        color: #3730a3;
+
+        text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+
+        .login-page {
+            padding: 25px 15px;
+        }
+
+        .login-card {
+            padding: 25px 20px;
+
+            border-radius: 13px;
+        }
+
+        .login-title {
+            font-size: 22px;
+        }
+
+        .login-title-row {
+            align-items: center;
+        }
+
+        .back-link {
+            font-size: 10px;
+        }
+
+    }
+
+</style>
+
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        {% if mess %}
+
+            <div class="message">
+                {{ mess }}
+            </div>
+
+        {% endif %}
+
+
+        <div class="login-header">
+
+            <div class="brand-badge">
+                CarePlus
+            </div>
+
+            <div class="login-title-row">
+
+                <h2 class="login-title">
+                    Login
+                </h2>
+
+                <a
+                    href="{{ url_for('routes.index') }}"
+                    class="back-link"
+                >
+                    &larr; Back
+                </a>
+
+            </div>
+
+            <p class="login-subtitle">
+                Sign in to access your CarePlus account.
+            </p>
+
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <form
+            action="{{ url_for('routes.login') }}"
+            method="POST"
+        >
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Email
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        class="form-input"
+                        placeholder="Enter your email"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        class="form-input"
+                        placeholder="Enter your password"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <div class="register-section">
+
+            Don't have an account?
+
+            <a
+                href="{{ url_for('routes.register') }}"
+                class="register-link"
+            >
+                Register
+            </a>
+
+        </div>
+
     </div>
 
-    <form action="{{ url_for('routes.login') }}" method="POST">
-      <label>Email</label>
-      <input type="email" name="email" required 
-             style="width:100%; padding:10px; margin:8px 0; 
-                    border:1px solid #ccc; border-radius:6px;">
-
-      <label>Password</label>
-      <input type="password" name="password" required 
-             style="width:100%; padding:10px; margin:8px 0; 
-                    border:1px solid #ccc; border-radius:6px;">
-
-      <button type="submit" 
-              style="width:100%; padding:12px; background:#007bff; 
-                     color:white; border:none; border-radius:6px;">
-        Login
-      </button>
-    </form>
-
-    <div style="text-align:center; margin-top:15px;">
-      Don't have an account?
-      <a href="{{ url_for('routes.register') }}" style="color:#007bff;">Register</a>
-    </div>
-  </div>
 </div>
+
 {% endblock %}

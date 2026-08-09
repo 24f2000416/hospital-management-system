@@ -1,70 +1,547 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
 
-    <!-- CSS Reset (optional) -->
+    <title>{{ department.name }} | CarePlus</title>
+
     <style>
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        body {
+            min-height: 100vh;
+
+            padding: 35px 25px;
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f5fa;
+            color: #111827;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 1100px;
+
+            margin: 0 auto;
+        }
+
+        /* Back button */
+
+        .back-form {
+            position: absolute;
+
+            top: 25px;
+            right: 30px;
+        }
+
+        .back-btn {
+            padding: 9px 16px;
+
+            background: #ffffff;
+            color: #4f46e5;
+
+            border: 1px solid #c7ccd8;
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #eef2ff;
+            border-color: #4f46e5;
+
+            transform: translateY(-2px);
+        }
+
+        /* Department header */
+
+        .department-header {
+            text-align: center;
+
+            margin-top: 25px;
+            margin-bottom: 30px;
+        }
+
+        .brand-badge {
+            display: inline-block;
+
+            padding: 6px 11px;
+
+            margin-bottom: 12px;
+
+            background: #eef2ff;
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+            border-radius: 6px;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .department-header h1 {
+            color: #111827;
+
+            font-size: 30px;
+            font-weight: 800;
+
+            margin-bottom: 15px;
+        }
+
+        /* Description */
+
+        .description-card {
+            max-width: 800px;
+
+            margin: 0 auto;
+
+            padding: 18px 22px;
+
+            background: #ffffff;
+
+            border: 1px solid #c7ccd8;
+            border-left: 4px solid #4f46e5;
+
+            border-radius: 9px;
+
+            box-shadow: 0 5px 20px rgba(24, 32, 51, 0.07);
+        }
+
+        .description-card strong {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .description-card p {
+            color: #667085;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        /* Doctors heading */
+
+        .doctors-heading {
+            margin: 35px 0 15px;
+
+            color: #111827;
+
+            font-size: 20px;
+            font-weight: 800;
+
+            text-align: left;
+        }
+
+        /* Table */
+
+        .table-card {
+            background: #ffffff;
+
+            border: 1px solid #c7ccd8;
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 22px rgba(24, 32, 51, 0.08);
+        }
+
+        .table-header {
+            padding: 15px 20px;
+
+            background: #f7f8fc;
+
+            border-bottom: 2px solid #c7ccd8;
+
+            color: #374151;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 14px 15px;
+
+            border-right: 1px solid #dfe3ea;
+            border-bottom: 1px solid #dfe3ea;
+
+            text-align: center;
+        }
+
+        th {
+            background: #ffffff;
+
+            color: #374151;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+
+            border-bottom: 2px solid #c7ccd8;
+        }
+
+        td {
+            color: #374151;
+
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: #f7f8fc;
+        }
+
+        tbody tr:hover td {
+            background: #eef2ff;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Doctor ID */
+
+        .doctor-id {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            background: #eef2ff;
+            color: #4f46e5;
+
+            border: 1px solid #d8dcf5;
+
+            border-radius: 5px;
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* Doctor name */
+
+        .doctor-name {
+            color: #111827;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* Action buttons */
+
+        .action-btn {
+            display: inline-block;
+
+            padding: 8px 13px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .details-btn {
+            background: #eef2ff;
+            color: #4f46e5;
+
+            border: 1px solid #c7d2fe;
+        }
+
+        .details-btn:hover {
+            background: #e0e7ff;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+        }
+
+        .availability-btn {
+            background: #ecfdf5;
+            color: #047857;
+
+            border: 1px solid #a7f3d0;
+        }
+
+        .availability-btn:hover {
+            background: #d1fae5;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 10px rgba(4, 120, 87, 0.15);
+        }
+
+        /* No doctors */
+
+        .no-doctors {
+            margin-top: 20px;
+
+            padding: 18px;
+
+            background: #ffffff;
+
+            color: #667085;
+
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+
+            text-align: center;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            box-shadow: 0 4px 15px rgba(24, 32, 51, 0.05);
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 25px 12px;
+            }
+
+            .back-form {
+                position: static;
+
+                text-align: right;
+
+                margin-bottom: 20px;
+            }
+
+            .department-header {
+                margin-top: 10px;
+            }
+
+            .department-header h1 {
+                font-size: 25px;
+            }
+
+            .doctors-heading {
+                font-size: 18px;
+            }
+
+            table {
+                min-width: 650px;
+            }
+
+            th,
+            td {
+                padding: 11px 12px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 <body>
 
+<div class="page-container">
 
 
-    
+    <form
+        action="{{ url_for('routes.patient_dashboard') }}"
+        method="get"
+        class="back-form"
+    >
 
-    <form action="{{ url_for('routes.patient_dashboard') }}" method="get" style="position:absolute; top:20px; right:20px;">
-        <button type="submit" 
-        style="padding:6px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-        back</button>
+        <button
+            type="submit"
+            class="back-btn"
+        >
+            ← Back
+        </button>
+
     </form>
 
-    
-    <div style="margin-bottom: 20px;" justify-content="center" align="center"><h1>{{department.name}}</h1>
-        <strong style="display:inline-block;">Department Description</strong>
-        <p>{{ department.description or "No description available." }}</p>
-        <h2>Doctors in this Department</h2>
-    {% if doctors%}
 
-    <table style="width:80%; border-collapse:collapse;">
-        <thead>
-            <tr>
+    <div class="department-header">
 
-                <th style="border:1px solid #ccc; padding:6px;">Doctor ID</th>
-                <th style="border:1px solid #ccc; padding:6px;">Doctor Name</th>
-                <th style="border:1px solid #ccc; padding:6px;">View Details</th>
-                <th style="border:1px solid #ccc; padding:6px;">Availability</th>
-                
-            
+        <div class="brand-badge">
+            CarePlus
+        </div>
 
-            </tr>
-        </thead>
-        <tbody>
-            {% for doctor in doctors %}
-            <tr>
-                <td style="border:1px solid #111111ff; padding:6px;">{{ doctor.id }}</td>
-                <td style="border:1px solid #070707ff; padding:6px;">{{ doctor.username }}</td>
-                <td style="border:1px solid #070707ff; padding:6px;"><a href="{{url_for('routes.doctor_detail_by_patient',doctor_id=doctor.id)}}"><button>view details</button></a></td>
-                <td style="border:1px solid #070707ff; padding:6px;"><a href="{{url_for('routes.check_avail_by_patient',doctor_id=doctor.id)}}"><button>Check Availability</button></a></td>
+        <h1>
+            {{department.name}}
+        </h1>
 
-                
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
-    
-    {% else %}
-        <p>No doctors found in this department.</p>
-    {% endif %}
+        <div class="description-card">
 
-    <!-- Your content goes here -->
+            <strong>
+                Department Description
+            </strong>
+
+            <p>
+                {{ department.description or "No description available." }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <h2 class="doctors-heading">
+        Doctors in this Department
+    </h2>
+
+
+{% if doctors%}
+
+    <div class="table-card">
+
+        <div class="table-header">
+            Available Doctors
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Doctor ID
+                        </th>
+
+                        <th>
+                            Doctor Name
+                        </th>
+
+                        <th>
+                            View Details
+                        </th>
+
+                        <th>
+                            Availability
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for doctor in doctors %}
+
+                    <tr>
+
+                        <td>
+                            <span class="doctor-id">
+                                {{ doctor.id }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="doctor-name">
+                                {{ doctor.username }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{url_for('routes.doctor_detail_by_patient',doctor_id=doctor.id)}}"
+                                class="action-btn details-btn"
+                            >
+                                View Details
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{url_for('routes.check_avail_by_patient',doctor_id=doctor.id)}}"
+                                class="action-btn availability-btn"
+                            >
+                                Check Availability
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+{% else %}
+
+    <div class="no-doctors">
+        No doctors found in this department.
+    </div>
+
+{% endif %}
+
+
+<!-- Your content goes here -->
+
+</div>
 
 </body>
+
 </html>

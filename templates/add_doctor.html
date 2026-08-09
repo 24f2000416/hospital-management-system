@@ -1,142 +1,841 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Doctor</title>
-  <style>
-    /* General page styling */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-/* Form container */
-.container {
-    width: 400px;
-    margin: 50px auto;
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
+```
+<title>Add Doctor | CarePlus</title>
 
-/* Centered headings */
-h3 {
-    text-align: center;
-}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #eef2ff;
 
-/* Space between form elements */
-.form-group {
-    margin-bottom: 10px;
-}
+        --background: #f4f5fa;
+        --surface: #ffffff;
+        --surface-alt: #f8f9fc;
 
-/* Labels */
-label {
-    display: block;
-    margin-bottom: 4px;
-}
+        --text: #182033;
+        --text-secondary: #4b5563;
+        --text-muted: #7b8496;
 
-/* Input fields and select dropdowns */
-input, select {
-    width: 100%;
-    padding: 6px;
-    box-sizing: border-box; /* ensures padding doesn’t exceed container width */
-}
+        --border: #dde1eb;
 
-/* Buttons */
-.btn {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
+        --success: #059669;
+        --danger: #dc2626;
+        --danger-bg: #fef2f2;
 
-.btn:hover {
-    background-color: #0056b3;
-}
+        --shadow: 0 5px 20px rgba(24, 32, 51, 0.09);
+        --shadow-small: 0 2px 8px rgba(24, 32, 51, 0.06);
+    }
 
-/* Links */
-a {
-    margin-left: 10px;
-    color: #007bff;
-    text-decoration: none;
-}
+    [data-theme="dark"] {
+        --background: #111827;
+        --surface: #1b2333;
+        --surface-alt: #202a3a;
 
-/* Error messages */
-.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 8px;
-    border-radius: 5px;
-    text-align: center;
-    margin-bottom: 10px;
-}
+        --text: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
 
-  </style>
+        --border: #334155;
+
+        --primary-light: #252554;
+        --danger-bg: #351d22;
+
+        --shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+        --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+    }
+
+    .top-bar {
+        width: 100%;
+        padding: 18px 4%;
+
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        box-shadow: var(--shadow-small);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        color: var(--text);
+        text-decoration: none;
+
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .brand-mark {
+        width: 34px;
+        height: 34px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: var(--primary);
+        color: #ffffff;
+
+        border-radius: 8px;
+
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 9px 15px;
+
+        background: var(--surface);
+        color: var(--primary);
+
+        border: 1px solid var(--border);
+        border-radius: 7px;
+
+        text-decoration: none;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        transition: 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        transform: translateY(-1px);
+    }
+
+    .page {
+        width: 92%;
+        max-width: 760px;
+
+        margin: 45px auto 70px;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-label {
+        display: inline-block;
+
+        padding: 6px 10px;
+        margin-bottom: 10px;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border: 1px solid var(--border);
+        border-radius: 6px;
+
+        font-size: 10px;
+        font-weight: 800;
+
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+
+        color: var(--text);
+
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .page-header p {
+        margin: 0;
+
+        color: var(--text-secondary);
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .flash-container {
+        width: 92%;
+        max-width: 760px;
+
+        margin: 18px auto 0;
+
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .flash-message {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 13px 16px;
+
+        background: var(--surface);
+        color: var(--text);
+
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+
+        border-radius: 7px;
+
+        box-shadow: var(--shadow-small);
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .flash-message.success {
+        border-left-color: var(--success);
+    }
+
+    .flash-message.danger {
+        border-left-color: var(--danger);
+    }
+
+    .flash-message.warning {
+        border-left-color: #d97706;
+    }
+
+    .flash-message.info {
+        border-left-color: var(--primary);
+    }
+
+    .flash-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .flash-icon {
+        width: 25px;
+        height: 25px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border-radius: 6px;
+
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .flash-message.success .flash-icon {
+        background: #ecfdf5;
+        color: var(--success);
+    }
+
+    .flash-message.danger .flash-icon {
+        background: var(--danger-bg);
+        color: var(--danger);
+    }
+
+    .flash-message.warning .flash-icon {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .flash-close {
+        border: none;
+        background: transparent;
+
+        color: var(--text-muted);
+
+        font-size: 18px;
+
+        cursor: pointer;
+    }
+
+    .form-card {
+        background: var(--surface);
+
+        border: 1px solid #c7ccd8;
+        border-radius: 12px;
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+    }
+
+    [data-theme="dark"] .form-card {
+        border-color: #465268;
+    }
+
+    .form-header {
+        padding: 20px 24px;
+
+        background: var(--surface-alt);
+
+        border-bottom: 2px solid #c7ccd8;
+
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    [data-theme="dark"] .form-header {
+        border-bottom-color: #465268;
+    }
+
+    .form-icon {
+        width: 38px;
+        height: 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: var(--primary-light);
+        color: var(--primary);
+
+        border: 1px solid #c7ccd8;
+        border-radius: 8px;
+
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    [data-theme="dark"] .form-icon {
+        border-color: #465268;
+    }
+
+    .form-header h2 {
+        margin: 0;
+
+        color: var(--text);
+
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .form-header p {
+        margin: 3px 0 0;
+
+        color: var(--text-muted);
+
+        font-size: 11px;
+    }
+
+    form {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+        padding-bottom: 18px;
+
+        border-bottom: 1px solid #d3d7e0;
+    }
+
+    [data-theme="dark"] .form-group {
+        border-bottom-color: #3b4659;
+    }
+
+    .form-group:last-of-type {
+        border-bottom: none;
+        padding-bottom: 5px;
+    }
+
+    .form-group label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: var(--text);
+
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .required {
+        color: var(--danger);
+    }
+
+    input,
+    select {
+        width: 100%;
+
+        padding: 12px 13px;
+
+        box-sizing: border-box;
+
+        background: var(--surface);
+
+        color: var(--text);
+
+        border: 1.5px solid #b8bfcc;
+        border-radius: 7px;
+
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+
+        outline: none;
+
+        transition: 0.2s ease;
+    }
+
+    [data-theme="dark"] input,
+    [data-theme="dark"] select {
+        border-color: #526078;
+    }
+
+    input:hover,
+    select:hover {
+        border-color: #8f98a8;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: var(--primary);
+
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    select {
+        cursor: pointer;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gap: 10px;
+
+        margin-top: 10px;
+        padding-top: 20px;
+
+        border-top: 2px solid #c7ccd8;
+    }
+
+    [data-theme="dark"] .form-actions {
+        border-top-color: #465268;
+    }
+
+    .save-btn {
+        padding: 10px 20px;
+
+        background: var(--primary);
+        color: #ffffff;
+
+        border: 1px solid var(--primary);
+        border-radius: 7px;
+
+        font-size: 12px;
+        font-weight: 800;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+    .save-btn:hover {
+        background: var(--primary-dark);
+
+        transform: translateY(-1px);
+
+        box-shadow: var(--shadow-small);
+    }
+
+    .cancel-btn {
+        padding: 10px 18px;
+
+        background: var(--surface);
+        color: var(--text-secondary);
+
+        border: 1px solid var(--border);
+        border-radius: 7px;
+
+        text-decoration: none;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        transition: 0.2s ease;
+    }
+
+    .cancel-btn:hover {
+        background: var(--surface-alt);
+        color: var(--text);
+    }
+
+    @media (max-width: 600px) {
+        .top-bar {
+            padding: 14px 4%;
+        }
+
+        .brand {
+            font-size: 16px;
+        }
+
+        .back-btn {
+            padding: 8px 11px;
+            font-size: 11px;
+        }
+
+        .page {
+            width: 94%;
+            margin-top: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+        }
+
+        .form-header {
+            padding: 17px;
+        }
+
+        form {
+            padding: 18px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .save-btn,
+        .cancel-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+```
+
 </head>
+
 <body>
 
-  <div class="container">
-    {% if error_message %}
-      <div class="error">{{ error_message }}</div>
+```
+<div class="top-bar">
+
+    <a
+        href="{{ url_for('routes.admin_dashboard') }}"
+        class="brand"
+    >
+        <span class="brand-mark">C</span>
+        CarePlus
+    </a>
+
+    <a
+        href="{{ url_for('routes.admin_dashboard') }}"
+        class="back-btn"
+    >
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+        <div class="flash-container">
+
+            {% for category, message in messages %}
+
+                <div class="flash-message {{ category }}">
+
+                    <div class="flash-content">
+
+                        <div class="flash-icon">
+                            {% if category == "danger" %}
+                                !
+                            {% elif category == "success" %}
+                                ✓
+                            {% elif category == "warning" %}
+                                !
+                            {% else %}
+                                i
+                            {% endif %}
+                        </div>
+
+                        <span>{{ message }}</span>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="flash-close"
+                        onclick="this.parentElement.remove()"
+                        aria-label="Close message"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
     {% endif %}
+{% endwith %}
 
-    <h3>Add Doctor</h3>
-    <form method="POST" action="{{ url_for('routes.add_doctor') }}">
+{% if error_message %}
 
-      
+    <div class="flash-container">
 
-      <div class="form-group">
-        <label for="department">Department *</label>
-        <select id="department" name="department_id" required>
-          <option value="" disabled selected>Select Department</option>
-          {% for dept in departments %}
-            <option value="{{ dept.id }}">{{ dept.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
+        <div class="flash-message danger">
 
-      <div class="form-group">
-        <label for="username">Doctor Name:</label>
-        <input type="text" id="username" name="username" required>
-      </div>
+            <div class="flash-content">
 
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-      </div>
+                <div class="flash-icon">
+                    !
+                </div>
 
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="exp">years of experience</label>
-        <input type="number" id="exp" name="exp" required>
-      </div>
+                <span>{{ error_message }}</span>
 
+            </div>
 
-      <div class="form-group">
-        <label for="quali">Qualification:</label>
-        <input type="text" id="quali" name="Qualification">
-      </div>
+            <button
+                type="button"
+                class="flash-close"
+                onclick="this.parentElement.remove()"
+                aria-label="Close message"
+            >
+                ×
+            </button>
 
+        </div>
 
-      <div class="form-group">
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone">
-      </div>
+    </div>
 
-      
+{% endif %}
 
-      <button type="submit" class="btn">Save</button>
-      <a href="{{ url_for('routes.admin_dashboard') }}">Cancel</a>
-    </form>
-  </div>
+<main class="page">
+
+    <div class="page-header">
+
+        <div class="page-label">
+            Admin Portal
+        </div>
+
+        <h1>Add Doctor</h1>
+
+        <p>
+            Add a new doctor and assign them to a department.
+        </p>
+
+    </div>
+
+    <div class="form-card">
+
+        <div class="form-header">
+
+            <div class="form-icon">
+                +
+            </div>
+
+            <div>
+                <h2>Doctor Details</h2>
+
+                <p>
+                    Enter the doctor's information below.
+                </p>
+            </div>
+
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('routes.add_doctor') }}"
+        >
+
+            <div class="form-group">
+
+                <label for="department">
+                    Department
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="department"
+                    name="department_id"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        selected
+                    >
+                        Select Department
+                    </option>
+
+                    {% for dept in departments %}
+
+                        <option value="{{ dept.id }}">
+                            {{ dept.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="username">
+                    Doctor Name
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    placeholder="Enter doctor's name"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="Enter doctor's email"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    minlength="8"
+                    placeholder="Enter a password"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="exp">
+                    Years of Experience
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="exp"
+                    name="exp"
+                    min="0"
+                    required
+                    placeholder="e.g. 5"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="quali">
+                    Qualification
+                </label>
+
+                <input
+                    type="text"
+                    id="quali"
+                    name="Qualification"
+                    placeholder="e.g. MBBS, MD"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone
+                </label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    maxlength="10"
+                    placeholder="Enter 10-digit phone number"
+                >
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('routes.admin_dashboard') }}"
+                    class="cancel-btn"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    Save Doctor
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+```
 
 </body>
 </html>
