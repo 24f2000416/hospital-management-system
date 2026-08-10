@@ -1054,15 +1054,20 @@ def doctor_dashboard():
 @routes.route('/doctor/availability', methods=['GET', 'POST'])
 @role_required("doctor")
 def doctor_availability():
+
     doctor_id = session.get('user_id')
+
     if not doctor_id:
         return redirect(url_for('routes.login'))
 
     today = datetime.now().date()
 
     upcoming_week = []
+
     for offset in range(7):
+
         this_day = today + timedelta(days=offset)
+
         upcoming_week.append(this_day)
 
         already_saved = DoctorAvailability.query.filter_by(
@@ -1071,17 +1076,19 @@ def doctor_availability():
         ).first()
 
         if not already_saved:
+
             new_day = DoctorAvailability(
                 doctor_id=doctor_id,
                 date=this_day,
                 morning=True,
                 evening=True
             )
+
             db.session.add(new_day)
 
     db.session.commit()
 
-# post logic block changes to booked slots
+
     if request.method == 'POST':
 
         for this_day in upcoming_week:
@@ -1109,8 +1116,8 @@ def doctor_availability():
             morning_booked = Appointment.query.filter(
                 Appointment.doctor_id == doctor_id,
                 func.date(Appointment.appointment_date) == this_day,
-                Appointment.appointment_time >= time(9,0),
-                Appointment.appointment_time < time(12,0),
+                Appointment.appointment_time >= time(9, 0),
+                Appointment.appointment_time < time(12, 0),
                 Appointment.status.in_(["scheduled", "completed"])
             ).first()
 
@@ -1118,28 +1125,82 @@ def doctor_availability():
             evening_booked = Appointment.query.filter(
                 Appointment.doctor_id == doctor_id,
                 func.date(Appointment.appointment_date) == this_day,
-                Appointment.appointment_time >= time(17,0),
-                Appointment.appointment_time < time(21,0),
+                Appointment.appointment_time >= time(17, 0),
+                Appointment.appointment_time < time(21, 0),
                 Appointment.status.in_(["scheduled", "completed"])
             ).first()
 
-            # Block morning change
+
+            # Block morning change if already booked
             if morning_booked and (row.morning != is_morning):
-                flash(f"Morning slot on {this_day} is already booked. You cannot change it.", "danger")
+
+                flash(
+                    f"Morning slot on {this_day} is already booked. "
+                    f"You cannot change it.",
+                    "danger"
+                )
+
             else:
+
                 row.morning = is_morning
 
-            # Block evening change
+
+            # Block evening change if already booked
             if evening_booked and (row.evening != is_evening):
-                flash(f"Evening slot on {this_day} is already booked. You cannot change it.", "danger")
+
+                flash(
+                    f"Evening slot on {this_day} is already booked. "
+                    f"You cannot change it.",
+                    "danger"
+                )
+
             else:
+
                 row.evening = is_evening
 
+
         db.session.commit()
-        return redirect(url_for('routes.doctor_availability'))
+
+        return redirect(
+            url_for('routes.doctor_availability')
+        )
 
 
-    week_rows = DoctorAvailability.query.filter(DoctorAvailability.doctor_id == doctor_id,DoctorAvailability.date.in_(upcoming_week)).order_by(DoctorAvailability.date).all()
+    # Get availability rows
+    week_rows = DoctorAvailability.query.filter(
+        DoctorAvailability.doctor_id == doctor_id,
+        DoctorAvailability.date.in_(upcoming_week)
+    ).order_by(
+        DoctorAvailability.date
+    ).all()
+
+
+    # Current date and time
+    now = datetime.now()
+
+    current_date = now.date()
+    current_time = now.time()
+
+    from datetime import time
+
+
+    # Temporarily mark expired slots as unavailable
+    # without changing the database
+    for row in week_rows:
+
+        if row.date == current_date:
+
+            # Morning slot: 9 AM - 12 PM
+            if current_time >= time(12, 0):
+
+                row.morning = False
+
+
+            # Evening slot: 5 PM - 9 PM
+            if current_time >= time(21, 0):
+
+                row.evening = False
+
 
     return render_template(
         '3264doctor_availability.html',
