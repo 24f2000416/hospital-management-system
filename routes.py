@@ -589,48 +589,55 @@ from datetime import time, date
 @routes.route('/patient_dashboard')
 @role_required("patient")
 def patient_dashboard():
+
     doctors = User.query.filter_by(role='doctor')
-    today = datetime.today().date() 
-    treatments = Treatment.query.join(Appointment).filter(Appointment.patient_id == session.get('user_id')).all()
-    appointments = Appointment.query.filter(Appointment.patient_id == session.get('user_id'),Appointment.appointment_date >= today,Appointment.status == 'scheduled')
-    departments=Department.query
-    
-    
-    
-    
-    query = request.args.get('query', '').strip()
-    
-        # If a search query exists, filter results
-    if query:
-        
-        
-        # Search in doctors
-        
-        doctors = doctors.filter(
-        (User.username.ilike(f"%{query}%")) |
-        (User.email.ilike(f"%{query}%")) |
-        (User.phone.ilike(f"%{query}%"))
+
+    today = datetime.today().date()
+
+    treatments = Treatment.query.join(Appointment).filter(
+        Appointment.patient_id == session.get('user_id')
+    ).all()
+
+    appointments = Appointment.query.filter(
+        Appointment.patient_id == session.get('user_id'),
+        Appointment.appointment_date >= today,
+        Appointment.status == 'scheduled'
     )
 
-        
-        
+    departments = Department.query
 
-        # Search in departments
+    query = request.args.get('query', '').strip()
+
+    if query:
+
+        # Search doctors
+        doctors = doctors.filter(
+            (User.username.ilike(f"%{query}%")) |
+            (User.email.ilike(f"%{query}%"))
+        )
+
+        # Search departments
         departments = departments.filter(
-            Department.name.ilike(f'%{query}%') |
-            Department.description.ilike(f'%{query}%')
+            (Department.name.ilike(f"%{query}%")) |
+            (Department.description.ilike(f"%{query}%"))
         )
 
-        # Search in appointments
-        appointments = appointments.filter(
-            (Appointment.patient_id.ilike(f'%{query}%')) |
-            (Appointment.doctor_id.ilike(f'%{query}%')) |
-            (Appointment.appointment_date.ilike(f'%{query}%')) |
-            (Appointment.appointment_time.ilike(f'%{query}%'))
+        # Search appointments using the doctor's name
+        appointments = appointments.join(
+            User,
+            Appointment.doctor_id == User.id
+        ).filter(
+            User.username.ilike(f"%{query}%")
         )
-    
-    
-    return render_template('patient_dashboard.html',departments=departments,doctors=doctors,appointments=appointments,treatments=treatments,query=query)
+
+    return render_template(
+        'patient_dashboard.html',
+        departments=departments,
+        doctors=doctors,
+        appointments=appointments,
+        treatments=treatments,
+        query=query
+    )
 
 
 # routes for viewing doctors by patient based on department on patient dashboard
