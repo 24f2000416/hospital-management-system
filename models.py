@@ -70,12 +70,16 @@ class User(UserMixin, db.Model):
 
     reviews_received = db.relationship(
         'Review',
-        back_populates='doctor'
+        back_populates='doctor',
+        cascade="all, delete",
+        passive_deletes=True
     )
 
     availability_slots = db.relationship(
         'DoctorAvailability',
-        back_populates='doctor'
+        back_populates='doctor',
+        cascade="all, delete",
+        passive_deletes=True
     )
 
     patient_profile = db.relationship(
@@ -95,7 +99,9 @@ class User(UserMixin, db.Model):
     doctor_appointments = db.relationship(
         'Appointment',
         back_populates='doctor',
-        foreign_keys='Appointment.doctor_id'
+        foreign_keys='Appointment.doctor_id',
+        cascade="all, delete",
+        passive_deletes=True
     )
 
 
@@ -172,7 +178,8 @@ class Appointment(db.Model):
     treatment_entry = db.relationship(
         'Treatment',
         back_populates='appointment',
-        uselist=False
+        uselist=False,
+        cascade="all, delete"
     )
 
     patient = db.relationship(

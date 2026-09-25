@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 
 from models import db, User
 from config import Config
@@ -10,6 +11,8 @@ from routes_admin import routes_admin
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+jwt = JWTManager(app)
 
 
 
@@ -28,10 +31,11 @@ if database_url and database_url.startswith("postgres://"):
         1
     )
 
-if database_url and database_url.startswith("postgresql://"):
+# Use psycopg2 dialect (psycopg2-binary is installed)
+if database_url and database_url.startswith("postgresql://") and "+psycopg" not in database_url:
     database_url = database_url.replace(
         "postgresql://",
-        "postgresql+psycopg://",
+        "postgresql+psycopg2://",
         1
     )
 
@@ -48,7 +52,6 @@ db.init_app(app)
 
 
 login_manager = LoginManager()
-
 login_manager.init_app(app)
 
 # If a logged-out user tries to access @login_required
@@ -58,8 +61,17 @@ login_manager.login_view = "routes.login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
+
+from flask import session
+
+@app.after_request
+def add_jwt_header(response):
+    jwt_token = session.get('jwt_token')
+    if jwt_token:
+        response.headers['X-JWT-Token'] = jwt_token
+    return response
 
 
 app.register_blueprint(routes)

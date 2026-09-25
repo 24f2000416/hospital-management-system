@@ -849,6 +849,14 @@
             border: 1px solid #fde7b0;
         }
 
+        .action-btn.unblacklist {
+            background: var(--success-bg);
+            color: var(--success);
+
+            border: 1px solid #6ee7b7;
+            font-weight: 800;
+        }
+
         .action-btn.delete {
             background: var(--danger-bg);
             color: var(--danger);
@@ -1420,7 +1428,25 @@
                                 </a>
 
 
-                                {% if not dept.blacklisted %}
+                                {% if dept.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.unblacklist_department', dept_id=dept.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Unblacklist this department?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn unblacklist"
+                                    >
+                                        ✓ Unblacklist
+                                    </button>
+
+                                </form>
+
+                                {% else %}
 
                                 <form
                                     method="POST"
@@ -1607,7 +1633,25 @@
                                 </a>
 
 
-                                {% if not doctor.blacklisted %}
+                                {% if doctor.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.unblacklist_doctor', doctor_id=doctor.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Unblacklist this doctor?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn unblacklist"
+                                    >
+                                        ✓ Unblacklist
+                                    </button>
+
+                                </form>
+
+                                {% else %}
 
                                 <form
                                     method="POST"
@@ -1786,7 +1830,25 @@
                                 </a>
 
 
-                                {% if not patient.blacklisted %}
+                                {% if patient.blacklisted %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('routes.unblacklist_3264_patient', patient_id=patient.id) }}"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Unblacklist this patient?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn unblacklist"
+                                    >
+                                        ✓ Unblacklist
+                                    </button>
+
+                                </form>
+
+                                {% else %}
 
                                 <form
                                     method="POST"

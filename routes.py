@@ -1,13 +1,10 @@
 from models import db, User, Department, Appointment, Treatment, DoctorAvailability
-
-
+from flask_jwt_extended import create_access_token, decode_token
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from datetime import time, date
-from models import db, User, Department, Appointment
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, request, session, redirect, url_for
-from datetime import datetime, timedelta
+
 # Create a Blueprint instance
 routes = Blueprint('routes', __name__)
 
@@ -83,8 +80,13 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        # Automatically log in the newly registered patient
+        # Automatically log in the newly registered patient using JWT token
         session.clear()
+        jwt_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={"role": user.role, "username": user.username}
+        )
+        session['jwt_token'] = jwt_token
         session['user_id'] = user.id
         session['username'] = user.username
         session['role'] = user.role
@@ -128,34 +130,31 @@ def login():
 
             session.clear()
 
+            jwt_token = create_access_token(
+                identity=str(user.id),
+                additional_claims={"role": user.role, "username": user.username}
+            )
+            session['jwt_token'] = jwt_token
             session['user_id'] = user.id
             session['username'] = user.username
             session['role'] = user.role
 
             if user.role == 'admin':
-                return redirect(
-                    url_for('routes.admin_dashboard')
-                )
-
+                response = redirect(url_for('routes.admin_dashboard'))
             elif user.role == 'doctor':
                 session['department_id'] = user.department_id
-
-                return redirect(
-                    url_for('routes.doctor_dashboard')
-                )
-
+                response = redirect(url_for('routes.doctor_dashboard'))
             elif user.role == 'patient':
-                return redirect(
-                    url_for('routes.patient_dashboard')
-                )
-
+                response = redirect(url_for('routes.patient_dashboard'))
             else:
                 session.clear()
-
                 return render_template(
                     'login.html',
                     mess="Invalid user role."
                 )
+
+            response.headers['X-JWT-Token'] = jwt_token
+            return response
 
         return render_template(
             'login.html',
@@ -165,14 +164,25 @@ def login():
     return render_template('login.html')
 
 
-#  Authorization part
+#  Authorization part (JWT Verified)
 from functools import wraps
 from flask import session, redirect, url_for, flash
+
+def get_jwt_user_payload():
+    token = session.get("jwt_token")
+    if not token:
+        return None
+    try:
+        return decode_token(token)
+    except Exception:
+        return None
 
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get("user_id"):
+        payload = get_jwt_user_payload()
+        if not payload or not session.get("user_id"):
+            session.clear()
             flash("Please login first.", "danger")
             return redirect(url_for("routes.login"))
         return f(*args, **kwargs)
@@ -183,10 +193,14 @@ def role_required(*roles):
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            if not session.get("user_id"):
+            payload = get_jwt_user_payload()
+            if not payload or not session.get("user_id"):
+                session.clear()
+                flash("Please login first.", "danger")
                 return redirect(url_for("routes.login"))
 
-            if session.get("role") not in roles:
+            user_role = payload.get("role") or session.get("role")
+            if user_role not in roles:
                 flash("Unauthorized access.", "danger")
                 return redirect(url_for("routes.index"))
 
@@ -366,23 +380,31 @@ def add_doctor():
 @routes.route('/admin_dashboard/delete_doctor/<int:doctor_id>', methods=['POST'])
 @role_required("admin")
 def delete_doctor(doctor_id):
-    doctor = User.query.filter_by(id=doctor_id,role="doctor").first_or_404()
+    doctor = User.query.filter_by(id=doctor_id, role="doctor").first_or_404()
     try:
+        from models import DoctorAvailability, Treatment
+
+        # 1. Delete availability slots
+        DoctorAvailability.query.filter_by(doctor_id=doctor_id).delete()
+
+        # 2. Get all appointments where this doctor is involved
+        doctor_appts = Appointment.query.filter_by(doctor_id=doctor_id).all()
+        for appt in doctor_appts:
+            # Delete treatment records linked to each appointment
+            Treatment.query.filter_by(appointment_id=appt.id).delete()
+        # Delete all doctor's appointments
+        Appointment.query.filter_by(doctor_id=doctor_id).delete()
+
+        # 3. Delete the doctor user
         db.session.delete(doctor)
         db.session.commit()
         flash('Doctor deleted successfully.', 'success')
     except Exception:
         db.session.rollback()
-
-        current_app.logger.exception(
-            "Error deleting doctor"
-        )
-
-        flash(
-            "Unable to delete doctor. Please try again.",
-            "danger"
-        )
+        current_app.logger.exception("Error deleting doctor")
+        flash("Unable to delete doctor. Please try again.", "danger")
     return redirect(url_for('routes.admin_dashboard'))
+
 
 
 
@@ -391,15 +413,31 @@ def delete_doctor(doctor_id):
 @routes.route('/admin_dashboard/delete_patient/<int:patient_id>', methods=['POST'])
 @role_required("admin")
 def delete_3264_patient(patient_id):
-    patient = User.query.filter_by(id=patient_id,role="patient").first_or_404()
+    patient = User.query.filter_by(id=patient_id, role="patient").first_or_404()
     try:
+        from models import Treatment
+
+        # 1. Get patient's appointments
+        patient_appts = Appointment.query.filter_by(patient_id=patient_id).all()
+        for appt in patient_appts:
+            # Delete treatment records linked to each appointment
+            Treatment.query.filter_by(appointment_id=appt.id).delete()
+        # Delete all patient's appointments
+        Appointment.query.filter_by(patient_id=patient_id).delete()
+
+        # 2. Delete treatments directly referencing the patient
+        Treatment.query.filter_by(patient_id=patient_id).delete()
+
+        # 3. Delete the patient user
         db.session.delete(patient)
         db.session.commit()
         flash('Patient deleted successfully.', 'success')
     except Exception as e:
         db.session.rollback()
+        current_app.logger.exception("Error deleting patient")
         flash(f'Error deleting Patient: {e}', 'danger')
     return redirect(url_for('routes.admin_dashboard'))
+
 
 
 
@@ -412,11 +450,26 @@ def blacklist_3264_patient(patient_id):
     try:
         patient.blacklisted = True
         db.session.commit()
-        flash('patient blacklisted successfully.', 'success')
+        flash('Patient blacklisted successfully.', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Error blacklisting patient: {e}', 'danger')
     return redirect(url_for('routes.admin_dashboard'))
+
+# route for unblacklisting patient by admin
+@routes.route('/admin_dashboard/unblacklist_patient/<int:patient_id>', methods=['POST'])
+@role_required("admin")
+def unblacklist_3264_patient(patient_id):
+    patient = User.query.filter_by(id=patient_id, role="patient").first_or_404()
+    try:
+        patient.blacklisted = False
+        db.session.commit()
+        flash('Patient unblacklisted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error unblacklisting patient: {e}', 'danger')
+    return redirect(url_for('routes.admin_dashboard'))
+
 
 @routes.route('/admin_dashboard/blacklist_doctor/<int:doctor_id>', methods=['POST'])
 @role_required("admin")
@@ -430,6 +483,21 @@ def blacklist_doctor(doctor_id):
         db.session.rollback()
         flash(f'Error blacklisting doctor: {e}', 'danger')
     return redirect(url_for('routes.admin_dashboard'))
+
+# route for unblacklisting doctor by admin
+@routes.route('/admin_dashboard/unblacklist_doctor/<int:doctor_id>', methods=['POST'])
+@role_required("admin")
+def unblacklist_doctor(doctor_id):
+    doctor = User.query.filter_by(id=doctor_id, role="doctor").first_or_404()
+    try:
+        doctor.blacklisted = False
+        db.session.commit()
+        flash('Doctor unblacklisted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error unblacklisting doctor: {e}', 'danger')
+    return redirect(url_for('routes.admin_dashboard'))
+
 
 
 # route for editing doctor by admin
@@ -555,17 +623,28 @@ def view_doctors_by_admin(dept_id):
 @role_required("admin")
 def delete_department(dept_id):
     department = Department.query.get_or_404(dept_id)
+
+    # Block deletion if any doctors are still assigned to this department
+    if department.doctors:
+        flash(
+            'Cannot delete department: doctors are still assigned to it. '
+            'Reassign or delete those doctors first.',
+            'danger'
+        )
+        return redirect(url_for('routes.admin_dashboard'))
+
     try:
         db.session.delete(department)
         db.session.commit()
         flash('Department deleted successfully.', 'success')
     except Exception as e:
         db.session.rollback()
+        current_app.logger.exception("Error deleting department")
         flash(f'Error deleting department: {e}', 'danger')
     return redirect(url_for('routes.admin_dashboard'))
 
 
-# departmetn blacklist route
+# department blacklist route
 @routes.route('/admin_dashboard/blacklist_department/<int:dept_id>', methods=['POST'])
 @role_required("admin")
 def blacklist_department(dept_id):
@@ -579,7 +658,19 @@ def blacklist_department(dept_id):
         flash(f'Error blacklisting department: {e}', 'danger')
     return redirect(url_for('routes.admin_dashboard'))
 
-
+# route for unblacklisting department by admin
+@routes.route('/admin_dashboard/unblacklist_department/<int:dept_id>', methods=['POST'])
+@role_required("admin")
+def unblacklist_department(dept_id):
+    department = Department.query.get_or_404(dept_id)
+    try:
+        department.blacklisted = False
+        db.session.commit()
+        flash('Department unblacklisted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error unblacklisting department: {e}', 'danger')
+    return redirect(url_for('routes.admin_dashboard'))
 
 
 from datetime import time, date
